@@ -1,15 +1,12 @@
-#!/usr/bin/env python
-# --coding:utf-8--
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from os import path
 import json
 from urllib import request, parse
+from config import Config
 
-
-APP_ID = "cli_XXXX"
-APP_SECRET = "XXXX"
-APP_VERIFICATION_TOKEN = "XXXX"
+APP_ID = Config().GetConfig("app.id")
+APP_SECRET = Config().GetConfig("app.secret")
+APP_VERIFICATION_TOKEN = Config().GetConfig("app.verification.token")
 
 class RequestHandler(BaseHTTPRequestHandler):
   def do_POST(self):
@@ -125,7 +122,7 @@ class RequestHandler(BaseHTTPRequestHandler):
       print("send message error, code = ", code, ", msg =", rsp_dict.get("msg", ""))
 
 def run():
-  port = 8000
+  port = Config().GetConfig("http.port")
   server_address = ('', port)
   httpd = HTTPServer(server_address, RequestHandler)
   print("start.....")
