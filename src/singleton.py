@@ -1,23 +1,23 @@
 from threading import Lock, Thread
+
 def synchronized(func):
   func.__lock__ = Lock()
-
   def lock_func(*args, **kwargs):
     with func.__lock__:
       return func(*args, **kwargs)
-
   return lock_func
 
+# 单例模式基类
 class Singleton(object):
   @synchronized
-  def __new__(self, *args, **kwargs):
+  def __new__(cls, *args, **kwargs):
     if Singleton._instance is None:
-      Singleton._instance = super().__new__(self)
+      Singleton._instance = super().__new__(cls)
     return Singleton._instance
 
   _instance = None
 
-
+# 单元测试
 if __name__ == "__main__":
   class NoSingleton(object):
     pass
