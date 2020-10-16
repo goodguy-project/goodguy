@@ -10,14 +10,12 @@ class RequestHandler(BaseHTTPRequestHandler):
     req_body = self.rfile.read(int(self.headers['content-length']))
     obj = json.loads(req_body.decode("utf-8"))
     print(req_body)
-
     # 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
     token = obj.get("token", "")
-    if token != Config().GetConfig("app.verification.token"):
+    if token != Config().GetConfig("app", "verification", "token"):
       print("verification token not match, token =", token)
       self.Response("")
       return
-
     # 根据 type 处理不同类型事件
     type = obj.get("type", "")
     if "url_verification" == type:  # 验证请求 URL 是否有效
@@ -44,13 +42,11 @@ class RequestHandler(BaseHTTPRequestHandler):
       print("unknown msg_type =", msg_type)
       self.Response("")
       return
-
     # 调用发消息 API 之前，先要获取 API 调用凭证：tenant_access_token
     access_token = self.GetTenantAccessToken()
     if access_token == "":
       self.Response("")
       return
-
     # 机器人 echo 收到的消息
     self.SendMessage(access_token, event.get("open_id"), event.get("text"))
     self.Response("")
@@ -68,10 +64,9 @@ class RequestHandler(BaseHTTPRequestHandler):
       "Content-Type" : "application/json"
     }
     req_body = {
-      "app_id": Config().GetConfig("app.id"),
-      "app_secret": Config().GetConfig("app.secret")
+      "app_id": Config().GetConfig("app", "id"),
+      "app_secret": Config().GetConfig("app", "secret")
     }
-
     data = bytes(json.dumps(req_body), encoding='utf8')
     req = request.Request(url=url, data=data, headers=headers, method='POST')
     try:
@@ -79,7 +74,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     except Exception as e:
       print(e)
       return ""
-
     rsp_body = response.read().decode('utf-8')
     rsp_dict = json.loads(rsp_body)
     code = rsp_dict.get("code", -1)
@@ -90,7 +84,6 @@ class RequestHandler(BaseHTTPRequestHandler):
 
   def SendMessage(self, token, open_id, text):
     url = "https://open.feishu.cn/open-apis/message/v4/send/"
-
     headers = {
       "Content-Type": "application/json",
       "Authorization": "Bearer " + token
@@ -102,7 +95,6 @@ class RequestHandler(BaseHTTPRequestHandler):
         "text": text
       }
     }
-
     data = bytes(json.dumps(req_body), encoding='utf8')
     req = request.Request(url=url, data=data, headers=headers, method='POST')
     try:
@@ -110,7 +102,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     except Exception as e:
       print(e)
       return
-
     rsp_body = response.read().decode('utf-8')
     rsp_dict = json.loads(rsp_body)
     code = rsp_dict.get("code", -1)
@@ -118,7 +109,7 @@ class RequestHandler(BaseHTTPRequestHandler):
       print("send message error, code = ", code, ", msg =", rsp_dict.get("msg", ""))
 
 def run():
-  port = Config().GetConfig("http.port")
+  port = Config().GetConfig("http", "port")
   server_address = ('', port)
   httpd = HTTPServer(server_address, RequestHandler)
   print("start.....")
