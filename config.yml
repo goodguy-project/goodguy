@@ -1,4 +1,8 @@
-app.id: ~
-app.secret: ~
-app.verification.token: ~
-http.port: ~
+app:
+  id: ~
+  secret: ~
+  verification:
+    token: ~
+
+http:
+  port: ~
