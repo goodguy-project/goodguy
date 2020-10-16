@@ -21,18 +21,21 @@ class Config(Singleton):
   ```
   `Config().GetConfig("b", 1)`会得到3
   """
-  def GetConfig(self, *args):
+  def GetConfig(self, *args, **kwargs):
     ret = self.config
     for arg in args:
       if ret is None:
-        return None
-      if isinstance(ret, dict):
-        ret = ret.get(arg, None)
-      else:
+        return kwargs.get("default", None)
+      try:
         ret = ret[arg]
+      except Exception:
+        ret = None
+        pass
+      if ret is None:
+        return kwargs.get("default", None)
     return ret
 
 # 单元测试
 if __name__ == "__main__":
   Config().Init()
-  print(Config().GetConfig("b"))
+  print(Config().GetConfig("app.verification.token"))
