@@ -1,4 +1,4 @@
-import yaml
+import yaml, os
 from singleton import Singleton
 
 class Config(Singleton):
@@ -8,7 +8,8 @@ class Config(Singleton):
 
   # 配置热更新
   def ReloadConfig(self):
-    with open('../config.yml', 'r', encoding='utf-8') as config_file:
+    dir_name = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    with open(os.path.join(dir_name, 'config.yml'), 'r', encoding='utf-8') as config_file:
       self.config = yaml.load(config_file.read(), yaml.FullLoader)
 
   """
