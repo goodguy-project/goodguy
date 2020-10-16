@@ -15,54 +15,54 @@ class RequestHandler(BaseHTTPRequestHandler):
     token = obj.get("token", "")
     if token != Config().GetConfig("app.verification.token"):
       print("verification token not match, token =", token)
-      self.response("")
+      self.Response("")
       return
 
     # 根据 type 处理不同类型事件
     type = obj.get("type", "")
     if "url_verification" == type:  # 验证请求 URL 是否有效
-      self.handle_request_url_verify(obj)
+      self.HandleRequestUrlVerify(obj)
     elif "event_callback" == type:  # 事件回调
       # 获取事件内容和类型，并进行相应处理，此处只关注给机器人推送的消息事件
       event = obj.get("event")
       if event.get("type", "") == "message":
-        self.handle_message(event)
+        self.HandleMessage(event)
         return
     return
 
-  def handle_request_url_verify(self, post_obj):
+  def HandleRequestUrlVerify(self, post_obj):
     # 原样返回 challenge 字段内容
     challenge = post_obj.get("challenge", "")
     rsp = {'challenge': challenge}
-    self.response(json.dumps(rsp))
+    self.Response(json.dumps(rsp))
     return
 
-  def handle_message(self, event):
+  def HandleMessage(self, event):
     # 此处只处理 text 类型消息，其他类型消息忽略
     msg_type = event.get("msg_type", "")
     if msg_type != "text":
       print("unknown msg_type =", msg_type)
-      self.response("")
+      self.Response("")
       return
 
     # 调用发消息 API 之前，先要获取 API 调用凭证：tenant_access_token
-    access_token = self.get_tenant_access_token()
+    access_token = self.GetTenantAccessToken()
     if access_token == "":
-      self.response("")
+      self.Response("")
       return
 
     # 机器人 echo 收到的消息
-    self.send_message(access_token, event.get("open_id"), event.get("text"))
-    self.response("")
+    self.SendMessage(access_token, event.get("open_id"), event.get("text"))
+    self.Response("")
     return
 
-  def response(self, body):
+  def Response(self, body):
     self.send_response(200)
     self.send_header('Content-Type', 'application/json')
     self.end_headers()
     self.wfile.write(body.encode())
 
-  def get_tenant_access_token(self):
+  def GetTenantAccessToken(self):
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
     headers = {
       "Content-Type" : "application/json"
@@ -88,7 +88,7 @@ class RequestHandler(BaseHTTPRequestHandler):
       return ""
     return rsp_dict.get("tenant_access_token", "")
 
-  def send_message(self, token, open_id, text):
+  def SendMessage(self, token, open_id, text):
     url = "https://open.feishu.cn/open-apis/message/v4/send/"
 
     headers = {
