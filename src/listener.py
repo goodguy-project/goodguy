@@ -4,10 +4,6 @@ import json
 from urllib import request, parse
 from config import Config
 
-APP_ID = Config().GetConfig("app.id")
-APP_SECRET = Config().GetConfig("app.secret")
-APP_VERIFICATION_TOKEN = Config().GetConfig("app.verification.token")
-
 class RequestHandler(BaseHTTPRequestHandler):
   def do_POST(self):
     # 解析请求 body
@@ -17,7 +13,7 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     # 校验 verification token 是否匹配，token 不匹配说明该回调并非来自开发平台
     token = obj.get("token", "")
-    if token != APP_VERIFICATION_TOKEN:
+    if token != Config().GetConfig("app.verification.token"):
       print("verification token not match, token =", token)
       self.response("")
       return
@@ -72,8 +68,8 @@ class RequestHandler(BaseHTTPRequestHandler):
       "Content-Type" : "application/json"
     }
     req_body = {
-      "app_id": APP_ID,
-      "app_secret": APP_SECRET
+      "app_id": Config().GetConfig("app.id"),
+      "app_secret": Config().GetConfig("app.secret")
     }
 
     data = bytes(json.dumps(req_body), encoding='utf8')
@@ -129,4 +125,5 @@ def run():
   httpd.serve_forever()
 
 if __name__ == '__main__':
+  Config().Init()
   run()
