@@ -42,7 +42,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     access_token = self.GetTenantAccessToken()
     if access_token == "":
       return
-    # 机器人 echo 收到的消息
     if event.get('open_chat_id', None) is not None:
       message.HandleMessage(access_token, 'chat_id', event.get('open_chat_id'), event.get("text_without_at_bot"))
     elif event.get('open_id', None) is not None:
@@ -84,7 +83,7 @@ def run():
   port = config.GetConfig("http", "port")
   server_address = ('', port)
   httpd = HTTPServer(server_address, RequestHandler)
-  print("start.....")
+  print("EigawaNoa is running...")
   httpd.serve_forever()
 
 if __name__ == '__main__':
