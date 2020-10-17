@@ -4,6 +4,14 @@ from promise import Promise
 class Cache(object):
   def __init__(self, func):
     self.func = func
+    # 正在进行作业的用户哈希表，key为handle，value为promise
+    self.crawling_map = dict()
+    # 该集合的多线程锁
+    self.crawling_map_lock = threading.Lock()
+    # 查询结果的缓存
+    self.data_map = dict()
+    # 缓存的多线程锁
+    self.data_map_lock = threading.Lock()
 
   def GetPromise(self, handle):
     ret = None
@@ -49,16 +57,3 @@ class Cache(object):
     self.crawling_map.pop(handle)
     self.crawling_map_lock.release()
     print(handle, data)
-
-  # 爬虫函数
-  func = None
-
-  # 正在进行作业的用户哈希表，key为handle，value为promise
-  crawling_map = dict()
-  # 该集合的多线程锁
-  crawling_map_lock = threading.Lock()
-
-  # 查询结果的缓存
-  data_map = dict()
-  # 缓存的多线程锁
-  data_map_lock = threading.Lock()
