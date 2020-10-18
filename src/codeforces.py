@@ -6,7 +6,7 @@ header = common.header
 proxy = common.proxy
 
 # 通过handle获取Codeforces做题数
-def GetCodeforcesCount(handle, url='https://codeforces.com/'):
+def GetCodeforcesCount(handle, url='https://codeforces.ml/'):
   global header, proxy
   response = requests.get(f'{url}api/user.status?handle={handle}', proxies=proxy, headers=header)
   response = json.loads(response.text)
@@ -25,7 +25,7 @@ def GetCodeforcesCount(handle, url='https://codeforces.com/'):
   return len(ProSet)
 
 # 通过handle获取Codeforces Rating
-def GetCodeforcesRating(handle, url='https://codeforces.com/'):
+def GetCodeforcesRating(handle, url='https://codeforces.ml/'):
   global header, proxy
   response = requests.get(f'{url}api/user.rating?handle={handle}', proxies=proxy, headers=header)
   response = json.loads(response.text)
