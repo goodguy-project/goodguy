@@ -53,4 +53,4 @@ def GetCodeforcesPromise(handle):
   return codeforces_cache.GetPromise(handle)
 
 def CodeforcesDataToString(handle, data: dict):
-  return f'用户名：{handle}\nCodeforces Rating：{data["rating"]}\nCodeforces做题数：{data["count"]}\n'
+  return f'用户名：{handle}\nCodeforces Rating：{data["rating"]}\nCodeforces做题数：{data["count"]}'

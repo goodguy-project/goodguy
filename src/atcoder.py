@@ -31,4 +31,4 @@ def GetAtcoderPromise(handle):
   return atcoder_cache.GetPromise(handle)
 
 def AtcoderDataToString(handle, data: dict):
-  return f'用户名：{handle}\nAtcoder Rating：{data["rating"]}\n'
+  return f'用户名：{handle}\nAtcoder Rating：{data["rating"]}'
