@@ -2,7 +2,8 @@
 import threading, common, config
 from promise import Promise
 class Cache(object):
-  def __init__(self, func):
+  # 初始化，func为GetPromise的函数，expire为过期时间（单位s，默认为两小时）
+  def __init__(self, func, expire=7200):
     self.func = func
     # 正在进行作业的用户哈希表，key为handle，value为promise
     self.crawling_map = dict()
@@ -12,6 +13,7 @@ class Cache(object):
     self.data_map = dict()
     # 缓存的多线程锁
     self.data_map_lock = threading.Lock()
+    self.expire = expire * (10 ** 9)
 
   def GetPromise(self, handle):
     ret = None
@@ -22,11 +24,12 @@ class Cache(object):
     self.crawling_map_lock.release()
     if ret is not None:
       return ret
-    # 否则，查看是否是最近2小时内查询过
+    # 否则，查看是否是最近查询过
     self.data_map_lock.acquire()
     data = self.data_map.get(handle, None)
-    if data is not None and data.get('crawl_time', 0) + config.GetConfig('cache', 'recrawl_time', default=common.kNsPerTwoHour) >= common.GetTime():
+    if data is not None and data.get('crawl_time', 0) + self.expire >= common.GetTime():
       ret = Promise()
+      ret.start()
       ret.result = data
     self.data_map_lock.release()
     if ret is not None:
