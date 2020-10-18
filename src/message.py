@@ -25,20 +25,21 @@ def SendMessage(token, message_type, send_id, text=''):
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
-超时有可能是不存在这个用户
-'''
+超时有可能是不存在这个用户'''
 
 def IsTimeOut(start_time):
   now = common.GetTime()
-  return now - start_time > float(config.GetConfig('crawler', 'timeout', default=5)) * (10 ** 9)
+  return now - start_time > float(config.GetConfig('crawler', 'timeout', default=15)) * (10 ** 9)
 
 def HandleMessageThread(token, message_type, send_id, text=''):
   global kMenu
   try:
+    if text is None:
+      text = ''
     text_split = text.split()
     f = '' if len(text_split) <= 0 else text_split[0]
     handle = '' if len(text_split) <= 1 else text_split[1]
-    if f == '菜单':
+    if f in {'菜单', 'menu', ''}:
       SendMessage(token, message_type, send_id, text=kMenu)
     elif f == 'reload_config':
       config.ReloadConfig()
@@ -46,7 +47,7 @@ def HandleMessageThread(token, message_type, send_id, text=''):
     elif f in {'cf', 'CF', 'codeforces'}:
       try:
         start_time = common.GetTime()
-        promise = GetCodeforcesPromise(handle)
+        promise = GetCodeforcesPromise(handle.lower())
         while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
           time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
         if hasattr(promise, 'result'):
@@ -58,7 +59,7 @@ def HandleMessageThread(token, message_type, send_id, text=''):
     elif f in {'atc', 'ATC', 'atcoder'}:
       try:
         start_time = common.GetTime()
-        promise = GetAtcoderPromise(handle)
+        promise = GetAtcoderPromise(handle.lower())
         while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
           time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
         if hasattr(promise, 'result'):
@@ -68,7 +69,7 @@ def HandleMessageThread(token, message_type, send_id, text=''):
       except common.NoSuchUserException as e:
         SendMessage(token, message_type, send_id, text=f'没有找到Atcoder用户 {handle}')
     else:
-      SendMessage(token, message_type, send_id, text=f'未知命令 {text}')
+      SendMessage(token, message_type, send_id, text=f'未知命令 {text}，用法：\n{kMenu}')
       print(f'unknown command {f}.')
   except Exception as e:
     print(e)
