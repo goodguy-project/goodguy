@@ -23,6 +23,7 @@ def GetAtcoderData(handle):
   data = {
     'rating': promise_rating.result
   }
+  print(handle, data)
   return data
 
 atcoder_cache = Cache(GetAtcoderData)

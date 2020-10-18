@@ -15,10 +15,13 @@ def GetCodeforcesCount(handle, url='https://codeforces.com/'):
   response = response['result']
   ProSet = set()
   for ele in response:
-    problem = ele['problem']
-    problem = str(problem['contestId']) + problem['index']
-    if ele['verdict'] == 'OK':
-      ProSet.add(problem)
+    try:
+      problem = ele['problem']
+      problem = str(problem['contestId']) + problem['index']
+      if ele['verdict'] == 'OK':
+        ProSet.add(problem)
+    except Exception:
+      pass
   return len(ProSet)
 
 # 通过handle获取Codeforces Rating
@@ -44,6 +47,7 @@ def GetCodeforcesData(handle, url='https://codeforces.com/'):
     'count': promise_count.result,
     'rating': promise_rating.result
   }
+  print(handle, data)
   return data
 
 # 缓存
