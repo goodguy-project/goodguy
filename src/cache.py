@@ -15,6 +15,7 @@ class Cache(object):
     self.data_map_lock = threading.Lock()
     self.expire = expire * (10 ** 9)
 
+  # TODO(ConanYu): 重新整理GetPromise逻辑
   def GetPromise(self, handle):
     ret = None
     # 如果是正在进行做的用户，直接返回其promise
