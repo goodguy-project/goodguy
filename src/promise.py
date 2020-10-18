@@ -1,6 +1,10 @@
 import threading
+
+def DoNothing(*args, **kwargs):
+  pass
+
 class Promise(threading.Thread):
-  def __init__(self, func=None, argv=(), callback=None, callback_argv=()):
+  def __init__(self, func=DoNothing, argv=(), callback=None, callback_argv=()):
     super(Promise, self).__init__()
     self.func = func
     self.argv = argv

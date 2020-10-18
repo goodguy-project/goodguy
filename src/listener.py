@@ -1,7 +1,36 @@
-import json, message, config
+import json, message, config, requests
 from os import path
 from urllib import request, parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from cache import Cache
+
+def GetTenantAccessToken():
+  url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
+  headers = {
+    "Content-Type" : "application/json"
+  }
+  req_body = {
+    "app_id": config.GetConfig("app", "id"),
+    "app_secret": config.GetConfig("app", "secret")
+  }
+  data = bytes(json.dumps(req_body), encoding='utf8')
+  print(data)
+  try:
+    req = requests.post(url=url, data=data, headers=headers)
+    req = json.loads(req.text)
+    return req.get('tenant_access_token', '')
+  except Exception as e:
+    print(e)
+    return ''
+
+def GetTenantAccessTokenData(unused_var):
+  data = {
+    'access_token': GetTenantAccessToken()
+  }
+  return data
+
+# token过期时间设置为28分钟
+token_cache = Cache(GetTenantAccessTokenData, 1680)
 
 class RequestHandler(BaseHTTPRequestHandler):
   def do_POST(self):
@@ -33,14 +62,19 @@ class RequestHandler(BaseHTTPRequestHandler):
     self.Response(json.dumps(rsp))
 
   def HandleMessage(self, event):
+    global token_cache
     # 此处只处理 text 类型消息，其他类型消息忽略
     msg_type = event.get("msg_type", "")
     if msg_type != "text":
       print("unknown msg_type =", msg_type)
       return
     # 调用发消息 API 之前，先要获取 API 调用凭证：tenant_access_token
-    access_token = self.GetTenantAccessToken()
-    if access_token == "":
+    token_promise = token_cache.GetPromise('')
+    token_promise.join()
+    access_token = ''
+    if hasattr(token_promise, 'result'):
+      access_token = token_promise.result.get('access_token', '')
+    if access_token == '':
       return
     if event.get('open_chat_id', None) is not None:
       message.HandleMessage(access_token, 'chat_id', event.get('open_chat_id'), event.get("text_without_at_bot"))
@@ -54,30 +88,6 @@ class RequestHandler(BaseHTTPRequestHandler):
     self.send_header('Content-Type', 'application/json')
     self.end_headers()
     self.wfile.write(body.encode())
-
-  def GetTenantAccessToken(self):
-    url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
-    headers = {
-      "Content-Type" : "application/json"
-    }
-    req_body = {
-      "app_id": config.GetConfig("app", "id"),
-      "app_secret": config.GetConfig("app", "secret")
-    }
-    data = bytes(json.dumps(req_body), encoding='utf8')
-    req = request.Request(url=url, data=data, headers=headers, method='POST')
-    try:
-      response = request.urlopen(req)
-    except Exception as e:
-      print(e)
-      return ""
-    rsp_body = response.read().decode('utf-8')
-    rsp_dict = json.loads(rsp_body)
-    code = rsp_dict.get("code", -1)
-    if code != 0:
-      print("get tenant_access_token error, code =", code)
-      return ""
-    return rsp_dict.get("tenant_access_token", "")
 
 def run():
   port = config.GetConfig("http", "port")
