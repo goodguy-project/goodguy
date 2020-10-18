@@ -1,6 +1,7 @@
 import json, requests, config, common, time
 from codeforces import GetCodeforcesPromise, CodeforcesDataToString
 from atcoder import GetAtcoderPromise, AtcoderDataToString
+from codeforces_contest import GetCodeforcesUpcomingContestPromise, CodeforcesUpcomingContestDataToString
 from promise import Promise
 
 def SendMessage(token, message_type, send_id, text=''):
@@ -25,7 +26,7 @@ def SendMessage(token, message_type, send_id, text=''):
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
-超时有可能是不存在这个用户'''
+3.查询Codeforces最近比赛，样式：`cf`'''
 
 def IsTimeOut(start_time):
   now = common.GetTime()
@@ -45,7 +46,16 @@ def HandleMessageThread(token, message_type, send_id, text=''):
       config.ReloadConfig()
       print('reload config successd.')
     elif f in {'cf', 'CF', 'codeforces'}:
-      try:
+      if handle == '':
+        start_time = common.GetTime()
+        promise = GetCodeforcesUpcomingContestPromise()
+        while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
+          time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
+        if hasattr(promise, 'result'):
+          SendMessage(token, message_type, send_id, text=CodeforcesUpcomingContestDataToString(promise.result))
+        else:
+          SendMessage(token, message_type, send_id, text=f'命令 {text} 超时')
+      else:
         start_time = common.GetTime()
         promise = GetCodeforcesPromise(handle.lower())
         while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
@@ -53,21 +63,16 @@ def HandleMessageThread(token, message_type, send_id, text=''):
         if hasattr(promise, 'result'):
           SendMessage(token, message_type, send_id, text=CodeforcesDataToString(handle, promise.result))
         else:
-          SendMessage(token, message_type, send_id, text=f'命令 {text} 超时')
-      except common.NoSuchUserException as e:
-        SendMessage(token, message_type, send_id, text=f'没有找到Codeforces用户 {handle}')
+          SendMessage(token, message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
     elif f in {'atc', 'ATC', 'atcoder'}:
-      try:
-        start_time = common.GetTime()
-        promise = GetAtcoderPromise(handle.lower())
-        while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
-          time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
-        if hasattr(promise, 'result'):
-          SendMessage(token, message_type, send_id, text=AtcoderDataToString(handle, promise.result))
-        else:
-          SendMessage(token, message_type, send_id, text=f'命令 {text} 超时')
-      except common.NoSuchUserException as e:
-        SendMessage(token, message_type, send_id, text=f'没有找到Atcoder用户 {handle}')
+      start_time = common.GetTime()
+      promise = GetAtcoderPromise(handle.lower())
+      while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
+        time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
+      if hasattr(promise, 'result'):
+        SendMessage(token, message_type, send_id, text=AtcoderDataToString(handle, promise.result))
+      else:
+        SendMessage(token, message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
     else:
       SendMessage(token, message_type, send_id, text=f'未知命令 {text}，用法：\n{kMenu}')
       print(f'unknown command {f}.')

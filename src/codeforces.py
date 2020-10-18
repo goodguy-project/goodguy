@@ -36,9 +36,9 @@ def GetCodeforcesRating(handle, url='https://codeforces.ml/'):
   except IndexError:
     return 0
 
-def GetCodeforcesData(handle, url='https://codeforces.com/'):
-  promise_count = Promise(GetCodeforcesCount, (handle, ))
-  promise_rating = Promise(GetCodeforcesRating, (handle, ))
+def GetCodeforcesData(handle, url='https://codeforces.ml/'):
+  promise_count = Promise(GetCodeforcesCount, (handle, url))
+  promise_rating = Promise(GetCodeforcesRating, (handle, url))
   promise_count.start()
   promise_rating.start()
   promise_count.join()
