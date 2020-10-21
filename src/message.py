@@ -44,12 +44,16 @@ def HandleMessageThread(token, message_type, send_id, text=''):
         text_split = text.split()
         f = '' if len(text_split) <= 0 else text_split[0]
         handle = '' if len(text_split) <= 1 else text_split[1]
+        f = f.lower()
+        # 查询菜单
         if f in {'菜单', 'menu', ''}:
             SendMessage(token, message_type, send_id, text=kMenu)
         elif f == 'reload_config':
             config.ReloadConfig()
             print('reload config successd.')
-        elif f in {'cf', 'CF', 'codeforces'}:
+        # 查询Codeforces信息
+        elif f in {'cf', 'codeforces'}:
+            # 查询Codeforces最近比赛
             if handle == '':
                 start_time = common.GetTime()
                 promise = GetCodeforcesUpcomingContestPromise()
@@ -60,6 +64,7 @@ def HandleMessageThread(token, message_type, send_id, text=''):
                                 text=CodeforcesUpcomingContestDataToString(promise.result))
                 else:
                     SendMessage(token, message_type, send_id, text=f'命令 {text} 超时')
+            # 查询Codeforces用户
             else:
                 start_time = common.GetTime()
                 promise = GetCodeforcesPromise(handle.lower())
@@ -69,7 +74,8 @@ def HandleMessageThread(token, message_type, send_id, text=''):
                     SendMessage(token, message_type, send_id, text=CodeforcesDataToString(handle, promise.result))
                 else:
                     SendMessage(token, message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
-        elif f in {'atc', 'ATC', 'atcoder'}:
+        # 查询Atcoder信息
+        elif f in {'atc', 'atcoder'}:
             start_time = common.GetTime()
             promise = GetAtcoderPromise(handle.lower())
             while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
@@ -78,9 +84,9 @@ def HandleMessageThread(token, message_type, send_id, text=''):
                 SendMessage(token, message_type, send_id, text=AtcoderDataToString(handle, promise.result))
             else:
                 SendMessage(token, message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
+        # 未知输入
         else:
             SendMessage(token, message_type, send_id, text=f'未知命令 {text}，用法：\n{kMenu}')
-            print(f'unknown command {f}.')
     except Exception as e:
         print(e)
 
