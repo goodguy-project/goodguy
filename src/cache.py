@@ -1,5 +1,5 @@
 # 缓存
-import threading, common, config
+import threading, common, config, time
 from promise import Promise
 
 
@@ -63,3 +63,37 @@ class Cache(object):
         with self.crawling_map_lock:
             self.crawling_map.pop(handle)
         print(handle, data)
+
+
+class AutoCache(object):
+    class InnerThread(threading.Thread):
+        def __init__(self, obj):
+            super().__init__(self)
+            self.obj = obj
+
+        def run(self):
+            while True:
+                time.sleep(self.obj.expire)
+                data = self.obj.func()
+                with self.obj.data_lock:
+                    self.data = data
+
+    def __init__(self, func, expire):
+        self.func = func
+        self.expire = expire
+        self.data_lock = threading.Lock
+        self.data = self.func()
+        self.thread = AutoCache.InnerThread(self)
+
+    def Run(self):
+        while True:
+            time.sleep(self.expire)
+            data = self.func()
+            with self.data_lock:
+                self.data = data
+
+    def Get(self):
+        data = None
+        with self.data_lock:
+            data = self.data
+        return data
