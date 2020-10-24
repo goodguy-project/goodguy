@@ -68,7 +68,7 @@ class Cache(object):
 class AutoCache(object):
     class InnerThread(threading.Thread):
         def __init__(self, obj):
-            super().__init__(self)
+            super(AutoCache.InnerThread, self).__init__()
             self.obj = obj
 
         def run(self):
@@ -81,16 +81,9 @@ class AutoCache(object):
     def __init__(self, func, expire):
         self.func = func
         self.expire = expire
-        self.data_lock = threading.Lock
+        self.data_lock = threading.Lock()
         self.data = self.func()
         self.thread = AutoCache.InnerThread(self)
-
-    def Run(self):
-        while True:
-            time.sleep(self.expire)
-            data = self.func()
-            with self.data_lock:
-                self.data = data
 
     def Get(self):
         data = None
