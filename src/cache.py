@@ -84,6 +84,7 @@ class AutoCache(object):
         self.data_lock = threading.Lock()
         self.data = self.func()
         self.thread = AutoCache.InnerThread(self)
+        self.thread.start()
 
     def Get(self):
         data = None
