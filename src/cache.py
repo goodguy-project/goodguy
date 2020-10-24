@@ -1,63 +1,93 @@
 # 缓存
-import threading, common, config
+import threading, common, config, time
 from promise import Promise
+
+
 class Cache(object):
-  # 初始化，func为GetPromise的函数，expire为过期时间（单位s，默认为两小时）
-  def __init__(self, func, expire=7200):
-    self.func = func
-    # 正在进行作业的用户哈希表，key为handle，value为promise
-    self.crawling_map = dict()
-    # 该集合的多线程锁
-    self.crawling_map_lock = threading.Lock()
-    # 查询结果的缓存
-    self.data_map = dict()
-    # 缓存的多线程锁
-    self.data_map_lock = threading.Lock()
-    self.expire = expire * (10 ** 9)
+    # 初始化，func为GetPromise的函数，expire为过期时间（单位s，默认为两小时）
+    def __init__(self, func, expire=7200):
+        self.func = func
+        # 正在进行作业的用户哈希表，key为handle，value为promise
+        self.crawling_map = dict()
+        # 该集合的多线程锁
+        self.crawling_map_lock = threading.Lock()
+        # 查询结果的缓存
+        self.data_map = dict()
+        # 缓存的多线程锁
+        self.data_map_lock = threading.Lock()
+        self.expire = expire * (10 ** 9)
 
-  # TODO(ConanYu): 重新整理GetPromise逻辑
-  def GetPromise(self, handle):
-    ret = None
-    # 如果是正在进行做的用户，直接返回其promise
-    self.crawling_map_lock.acquire()
-    if handle in self.crawling_map:
-      ret = self.crawling_map.get(handle)
-    self.crawling_map_lock.release()
-    if ret is not None:
-      return ret
-    # 否则，查看是否是最近查询过
-    self.data_map_lock.acquire()
-    data = self.data_map.get(handle, None)
-    if data is not None and data.get('crawl_time', 0) + self.expire >= common.GetTime():
-      ret = Promise()
-      ret.start()
-      ret.result = data
-    self.data_map_lock.release()
-    if ret is not None:
-      return ret
-    # 重新进行爬取
-    self.crawling_map_lock.acquire()
-    # 判断是否是正在进行的作业，直接返回其promise，防止在大量查询同一个人时造成多次爬取
-    if handle in self.crawling_map:
-      ret = self.crawling_map.get(handle)
-    else:
-      ret = Promise(self.func, (handle, ), self.UpdateData, (handle, ))
-      ret.start()
-      self.crawling_map[handle] = ret
-    self.crawling_map_lock.release()
-    return ret
+    def GetPromise(self, handle):
+        ret = None
+        # 查看在缓存中是否有数据
+        with self.data_map_lock:
+            data = self.data_map.get(handle, None)
+            is_expire = False
+            if data is not None:
+                ret = Promise()
+                ret.start()
+                ret.result = data
+                # 查看数据是否已经过期
+                if data.get('crawl_time', 0) + self.expire >= common.GetTime():
+                    is_expire = True
+        # 缓存中有数据
+        if ret is not None:
+            # 已经过期了
+            if is_expire:
+                with self.crawling_map_lock:
+                    # 不在爬取作业中
+                    if handle not in self.crawling_map:
+                        new_promise = Promise(self.func, (handle,), self.UpdateData, (handle,))
+                        new_promise.start()
+                        self.crawling_map[handle] = new_promise
+            # 返回缓存中的数据
+            return ret
+        with self.crawling_map_lock:
+            ret = self.crawling_map.get(handle, None)
+            # 不在爬取作业中
+            if ret is None:
+                ret = Promise(self.func, (handle,), self.UpdateData, (handle,))
+                ret.start()
+                self.crawling_map[handle] = ret
+        return ret
 
-  def UpdateData(self, handle, data):
-    # 更新数据
-    self.data_map_lock.acquire()
-    data['crawl_time'] = common.GetTime()
-    self.data_map[handle] = data
-    # 数据太多了直接清完所有缓存
-    if len(self.data_map) >= config.GetConfig('cache', 'maxsize', default=10000):
-      self.data_map.clear()
-    self.data_map_lock.release()
-    # 更新这个handle的状态为不是正在进行作业
-    self.crawling_map_lock.acquire()
-    self.crawling_map.pop(handle)
-    self.crawling_map_lock.release()
-    print(handle, data)
+    def UpdateData(self, handle, data):
+        # 更新数据
+        with self.data_map_lock:
+            data['crawl_time'] = common.GetTime()
+            self.data_map[handle] = data
+            # 数据太多了直接清完所有缓存
+            if len(self.data_map) >= config.GetConfig('cache', 'maxsize', default=10000):
+                self.data_map.clear()
+        # 更新这个handle的状态为不是正在进行作业
+        with self.crawling_map_lock:
+            self.crawling_map.pop(handle)
+        print(handle, data)
+
+
+class AutoCache(object):
+    class InnerThread(threading.Thread):
+        def __init__(self, obj):
+            super(AutoCache.InnerThread, self).__init__()
+            self.obj = obj
+
+        def run(self):
+            while True:
+                time.sleep(self.obj.expire)
+                data = self.obj.func()
+                with self.obj.data_lock:
+                    self.data = data
+
+    def __init__(self, func, expire):
+        self.func = func
+        self.expire = expire
+        self.data_lock = threading.Lock()
+        self.data = self.func()
+        self.thread = AutoCache.InnerThread(self)
+        self.thread.start()
+
+    def Get(self):
+        data = None
+        with self.data_lock:
+            data = self.data
+        return data
