@@ -1,7 +1,7 @@
 import json, requests, config, common, time
 from codeforces import GetCodeforcesPromise, CodeforcesDataToString
 from atcoder import GetAtcoderPromise, AtcoderDataToString
-from codeforces_contest import GetCodeforcesUpcomingContestPromise, CodeforcesUpcomingContestDataToString
+from codeforces_contest import GetCodeforcesUpcomingContest, CodeforcesUpcomingContestDataToString
 from promise import Promise
 from cache import AutoCache
 
@@ -78,15 +78,7 @@ def HandleMessageThread(message_type, send_id, text=''):
         elif f in {'cf', 'codeforces'}:
             # 查询Codeforces最近比赛
             if handle == '':
-                start_time = common.GetTime()
-                promise = GetCodeforcesUpcomingContestPromise()
-                while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
-                    time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
-                if hasattr(promise, 'result'):
-                    SendMessage(message_type, send_id,
-                                text=CodeforcesUpcomingContestDataToString(promise.result))
-                else:
-                    SendMessage(message_type, send_id, text=f'命令 {text} 超时')
+                SendMessage(message_type, send_id, text=CodeforcesUpcomingContestDataToString(GetCodeforcesUpcomingContest()))
             # 查询Codeforces用户
             else:
                 start_time = common.GetTime()

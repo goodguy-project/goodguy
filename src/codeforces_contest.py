@@ -1,12 +1,12 @@
 import time, requests, json, common
 from promise import Promise
-from cache import Cache
+from cache import Cache, AutoCache
 
 header = common.header
 proxy = common.proxy
 
 
-def GetCodeforcesUpcomingContest(url='https://codeforces.ml/'):
+def GetCodeforcesUpcomingContestFunc(url='https://codeforces.ml/'):
     response = json.loads(requests.get(url + 'api/contest.list?gym=false', proxies=proxy, headers=header).text)
     upcoming_contest = []
     for contest in response['result']:
@@ -15,25 +15,12 @@ def GetCodeforcesUpcomingContest(url='https://codeforces.ml/'):
     return upcoming_contest
 
 
-def GetCodeforcesUpcomingContestData(unused_var, url='https://codeforces.ml/'):
-    promise_upcoming_contest = Promise(GetCodeforcesUpcomingContest, (url,))
-    promise_upcoming_contest.start()
-    promise_upcoming_contest.join()
-    data = {
-        'upcoming_contest': promise_upcoming_contest.result
-    }
-    print(data)
-    return data
-
-
 # 过期时间6小时
 # TODO(ConanYu): 这里不应该使用Cache
-upcoming_contest_cache = Cache(GetCodeforcesUpcomingContestData, 21600)
+upcoming_contest_cache = AutoCache(GetCodeforcesUpcomingContestFunc, 21600)
 
-
-def GetCodeforcesUpcomingContestPromise():
-    return upcoming_contest_cache.GetPromise('')
-
+def GetCodeforcesUpcomingContest():
+    return upcoming_contest_cache.Get()
 
 def CodeforcesUpcomingContestDataToString(data):
     def LengthToString(length):
@@ -51,7 +38,7 @@ def CodeforcesUpcomingContestDataToString(data):
         return ret_str
 
     ret = '最近Codeforces比赛：\n'
-    contests = data['upcoming_contest'][::-1]
+    contests = data[::-1]
     for contest in contests:
         start_time = time.localtime(contest["startTimeSeconds"])
         ret += f'比赛名称: {contest["name"]}\n开始时间：{start_time.tm_year}年{start_time.tm_mon}月{start_time.tm_mday}日 {"%02d" % (start_time.tm_hour)}:{"%02d" % (start_time.tm_min)}\n比赛长度：{LengthToString(contest["durationSeconds"])}\n\n'
