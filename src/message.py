@@ -15,7 +15,6 @@ def GetTenantAccessToken():
         "app_secret": config.GetConfig("app", "secret")
     }
     data = bytes(json.dumps(req_body), encoding='utf8')
-    print(data)
     try:
         req = requests.post(url=url, data=data, headers=headers)
         req = json.loads(req.text)

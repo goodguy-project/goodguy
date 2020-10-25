@@ -76,7 +76,7 @@ class AutoCache(object):
                 time.sleep(self.obj.expire)
                 data = self.obj.func()
                 with self.obj.data_lock:
-                    self.data = data
+                    self.obj.data = data
 
     def __init__(self, func, expire):
         self.func = func
