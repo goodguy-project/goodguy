@@ -1,4 +1,4 @@
-import config, common, time
+import config, common, time, notice
 from codeforces_contest import GetCodeforcesUpcomingContest
 from codeforces import GetCodeforcesPromise, CodeforcesDataToString
 from atcoder import GetAtcoderPromise, AtcoderDataToString
@@ -17,7 +17,7 @@ def GetFromPromise(future, expire, data_to_string_func, argv=()):
     return None
 
 
-def Converse(text: str) -> str:
+def Converse(text: str, **kwargs) -> str:
     global kMenu
     result = None
     text_split = text.split()
@@ -43,6 +43,14 @@ def Converse(text: str) -> str:
     # 查询Atcoder信息
     elif f in {'atc', 'atcoder'}:
         result = GetFromPromise(GetAtcoderPromise(handle.lower()), 15.0, AtcoderDataToString, (handle,))
+    elif f == 'print_message':
+        result = f'message_type: {kwargs["message_type"]}\nsend_id: {kwargs["send_id"]}'
+    elif f == 'notice':
+        notice.AddNoticeId(kwargs["message_type"], kwargs["send_id"])
+        result = 'notice ok'
+    elif f == 'unnotice':
+        notice.RemoveNoticeId(kwargs["message_type"], kwargs["send_id"])
+        result = 'remove notice ok'
     # 未知输入
     if result is None:
         result = f'命令 {text} 发生未知错误，用法：\n{kMenu}'

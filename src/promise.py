@@ -6,7 +6,7 @@ def DoNothing(*args, **kwargs):
 
 
 class Promise(threading.Thread):
-    def __init__(self, func=DoNothing, argv=(), callback=None, callback_argv=()):
+    def __init__(self, func=DoNothing, argv=(), callback=DoNothing, callback_argv=()):
         super(Promise, self).__init__()
         self.func = func
         self.argv = argv
@@ -15,5 +15,4 @@ class Promise(threading.Thread):
 
     def run(self):
         self.result = self.func(*self.argv)
-        if self.callback is not None:
-            self.callback(*self.callback_argv, self.result)
+        self.callback(*self.callback_argv, self.result)
