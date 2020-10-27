@@ -16,11 +16,8 @@ def GetCodeforcesUpcomingContestFunc(url='https://codeforces.ml/'):
 
 
 # 过期时间6小时
-# TODO(ConanYu): 这里不应该使用Cache
 upcoming_contest_cache = AutoCache(GetCodeforcesUpcomingContestFunc, 21600)
 
-def GetCodeforcesUpcomingContest():
-    return upcoming_contest_cache.Get()
 
 def CodeforcesUpcomingContestDataToString(data):
     def LengthToString(length):
@@ -39,7 +36,13 @@ def CodeforcesUpcomingContestDataToString(data):
 
     ret = '最近Codeforces比赛：\n'
     contests = data[::-1]
+    if len(contests) > 5:
+        contests = contests[:5]
     for contest in contests:
         start_time = time.localtime(contest["startTimeSeconds"])
         ret += f'比赛名称: {contest["name"]}\n开始时间：{start_time.tm_year}年{start_time.tm_mon}月{start_time.tm_mday}日 {"%02d" % (start_time.tm_hour)}:{"%02d" % (start_time.tm_min)}\n比赛长度：{LengthToString(contest["durationSeconds"])}\n\n'
     return ret[:-2]
+
+
+def GetCodeforcesUpcomingContest():
+    return CodeforcesUpcomingContestDataToString(upcoming_contest_cache.Get())

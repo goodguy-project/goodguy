@@ -4,6 +4,7 @@ from atcoder import GetAtcoderPromise, AtcoderDataToString
 from codeforces_contest import GetCodeforcesUpcomingContest, CodeforcesUpcomingContestDataToString
 from promise import Promise
 from cache import AutoCache
+from converse import Converse
 
 def GetTenantAccessToken():
     url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
@@ -18,6 +19,7 @@ def GetTenantAccessToken():
     try:
         req = requests.post(url=url, data=data, headers=headers)
         req = json.loads(req.text)
+        print(req.get('tenant_access_token', 'no repsonse'))
         return req.get('tenant_access_token', '')
     except Exception as e:
         print(e)
@@ -54,54 +56,11 @@ kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 3.查询Codeforces最近比赛，样式：`cf`'''
 
 
-def IsTimeOut(start_time):
-    now = common.GetTime()
-    return now - start_time > float(config.GetConfig('crawler', 'timeout', default=15)) * (10 ** 9)
-
-
 def HandleMessageThread(message_type, send_id, text=''):
-    global kMenu
     try:
         if text is None:
             text = ''
-        text_split = text.split()
-        f = '' if len(text_split) <= 0 else text_split[0]
-        handle = '' if len(text_split) <= 1 else text_split[1]
-        f = f.lower()
-        # 查询菜单
-        if f in {'菜单', 'menu', ''}:
-            SendMessage(message_type, send_id, text=kMenu)
-        elif f == 'reload_config':
-            config.ReloadConfig()
-            print('reload config successd.')
-        # 查询Codeforces信息
-        elif f in {'cf', 'codeforces'}:
-            # 查询Codeforces最近比赛
-            if handle == '':
-                SendMessage(message_type, send_id, text=CodeforcesUpcomingContestDataToString(GetCodeforcesUpcomingContest()))
-            # 查询Codeforces用户
-            else:
-                start_time = common.GetTime()
-                promise = GetCodeforcesPromise(handle.lower())
-                while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
-                    time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
-                if hasattr(promise, 'result'):
-                    SendMessage(message_type, send_id, text=CodeforcesDataToString(handle, promise.result))
-                else:
-                    SendMessage(message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
-        # 查询Atcoder信息
-        elif f in {'atc', 'atcoder'}:
-            start_time = common.GetTime()
-            promise = GetAtcoderPromise(handle.lower())
-            while not IsTimeOut(start_time) and not hasattr(promise, 'result'):
-                time.sleep(float(config.GetConfig('crawler', 'sleeptime', default=0.01)))
-            if hasattr(promise, 'result'):
-                SendMessage(message_type, send_id, text=AtcoderDataToString(handle, promise.result))
-            else:
-                SendMessage(message_type, send_id, text=f'命令 {text} 超时或无法找到该用户')
-        # 未知输入
-        else:
-            SendMessage(message_type, send_id, text=f'未知命令 {text}，用法：\n{kMenu}')
+        SendMessage(message_type, send_id, Converse(text))
     except Exception as e:
         print(e)
 
