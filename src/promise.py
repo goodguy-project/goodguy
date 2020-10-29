@@ -13,6 +13,7 @@ class Promise(threading.Thread):
         self.callback = callback
         self.callback_argv = callback_argv
 
+    # 重载run函数
     def run(self):
         self.result = self.func(*self.argv)
         self.callback(*self.callback_argv, self.result)

@@ -15,7 +15,6 @@ def GetTenantAccessToken():
     try:
         req = requests.post(url=url, data=data, headers=headers)
         req = json.loads(req.text)
-        print(req.get('tenant_access_token', 'no repsonse'))
         return req.get('tenant_access_token', '')
     except Exception as e:
         print(e)
