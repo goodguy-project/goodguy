@@ -52,8 +52,10 @@ def AddNoticeId(message_type, send_id):
 
 # 删除notice_id的api
 def RemoveNoticeId(message_type, send_id):
-    notice_id.remove(message_type + "|" + send_id)
-    UpdateNoticeId()
+    tmp = message_type + "|" + send_id
+    if tmp in notice_id:
+        notice_id.remove(message_type + "|" + send_id)
+        UpdateNoticeId()
 
 
 # 调度器 使用北京时间
