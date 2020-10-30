@@ -14,7 +14,7 @@ kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 
 def GetFromPromise(future, expire, data_to_string_func, argv=()):
     start_time = common.GetTime()
-    while not common.GetTime() - start_time > expire * 1000000000:
+    while not common.GetTime() - start_time > expire * 1000000000 and not hasattr(future, 'result'):
         time.sleep(float(0.01))
     if hasattr(future, 'result'):
         return data_to_string_func(*argv, future.result)
