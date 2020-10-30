@@ -9,7 +9,7 @@ header = common.header
 proxy = common.proxy
 
 
-def GetNowcoderACMData(handle):
+def GetNowcoderACMData1(handle):
   global header, proxy
   url = f'https://ac.nowcoder.com/acm/contest/profile/{handle}'
   response = requests.get(url, headers=header, proxies=proxy)
@@ -24,6 +24,20 @@ def GetNowcoderACMData(handle):
     'rating': rating,
     'rating_rank': rating_rank,
     'contest_cnt': contest_cnt
+  }
+
+
+def GetNowcoderACMData2(handle):
+  global header, proxy
+  url = f'https://ac.nowcoder.com/acm/contest/profile/{handle}/practice-coding'
+  response = requests.get(url, headers=header, proxies=proxy)
+  obj = etree.HTML(response.text)
+  tmp = obj.xpath('//div[@class="state-num"]')
+  accepted = tmp[1].text
+  submit_cnt = tmp[2].text
+  return {
+    'accepted': accepted,
+    'submit_cnt': submit_cnt
   }
 
 
@@ -49,15 +63,19 @@ def GetNowcoderProfile(handle):
 
 
 def GetNowcoderData(handle):
-  promise_acm = Promise(GetNowcoderACMData, (handle,))
+  promise_acm1 = Promise(GetNowcoderACMData1, (handle,))
+  promise_acm2 = Promise(GetNowcoderACMData2, (handle,))
   promise_profile = Promise(GetNowcoderProfile, (handle,))
-  promise_acm.start()
+  promise_acm1.start()
+  promise_acm2.start()
   promise_profile.start()
-  promise_acm.join()
+  promise_acm1.join()
+  promise_acm2.join()
   promise_profile.join()
-  print(handle, promise_acm.result, promise_profile.result)
+  print(handle, promise_acm1.result, promise_profile.result)
   return {
-    'acm': promise_acm.result,
+    'acm1': promise_acm1.result,
+    'acm2': promise_acm2.result,
     'profile': promise_profile.result
   }
 
@@ -65,14 +83,16 @@ nowcoder_cache = Cache(GetNowcoderData)
 
 
 def NowcoderDataToString(handle, data):
-  rating      = data['acm']['rating']
-  rating_rank = data['acm']['rating_rank']
-  contest_cnt = data['acm']['contest_cnt']
+  rating      = data['acm1']['rating']
+  rating_rank = data['acm1']['rating_rank']
+  contest_cnt = data['acm1']['contest_cnt']
+  accepted_c  = data['acm2']['accepted']
+  submit_cnt  = data['acm2']['submit_cnt']
   achievement = data['profile']['achievement']
   like        = data['profile']['like']
   correct     = data['profile']['correct']
   accepted    = data['profile']['accepted']
-  return f'牛客ID：{handle}\n\n牛客竞赛\nRating：{rating}\nRating排名：{rating_rank}\n参加过比赛次数：{contest_cnt}\n\n牛客主站\n成就值：{achievement}\n获赞与收藏：{like}\n题目正确：{correct}\n编程正确：{accepted}'
+  return f'牛客ID：{handle}\n\n牛客竞赛\nRating：{rating}\nRating排名：{rating_rank}\n题目通过数：{accepted_c}\n总提交次数：{submit_cnt}\n参加过比赛次数：{contest_cnt}\n\n牛客主站\n成就值：{achievement}\n获赞与收藏：{like}\n题目正确：{correct}\n编程正确：{accepted}'
 
 
 def GetNowcoderPromise(handle):
