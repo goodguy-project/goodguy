@@ -46,15 +46,18 @@ def GetNowcoderProfile(handle):
   url = f'https://www.nowcoder.com/profile/{handle}'
   response = requests.get(url, headers=header, proxies=proxy)
   obj = etree.HTML(response.text)
+  name = obj.xpath('//a[contains(@class, "profile-user-name")]')
   tmp1 = obj.xpath('//span[@class="txt"]')
   tmp2 = obj.xpath('//span[@class="num"]')
-  if len(tmp1) < 1 or len(tmp2) < 3:
+  if len(tmp1) < 1 or len(tmp2) < 3 or len(name) < 1:
     raise common.NoSuchUserException(handle)
+  name = name[0].get('data-title')
   achievement = tmp1[0].text
   like = tmp2[0].text
   correct = tmp2[1].text
   accepted = tmp2[2].text
   return {
+    'name': name,
     'achievement': achievement,
     'like': like,
     'correct': correct,
@@ -88,11 +91,12 @@ def NowcoderDataToString(handle, data):
   contest_cnt = data['acm1']['contest_cnt']
   accepted_c  = data['acm2']['accepted']
   submit_cnt  = data['acm2']['submit_cnt']
+  name        = data['profile']['name']
   achievement = data['profile']['achievement']
   like        = data['profile']['like']
   correct     = data['profile']['correct']
   accepted    = data['profile']['accepted']
-  return f'牛客ID：{handle}\n\n牛客竞赛\nRating：{rating}\nRating排名：{rating_rank}\n题目通过数：{accepted_c}\n总提交次数：{submit_cnt}\n参加过比赛次数：{contest_cnt}\n\n牛客主站\n成就值：{achievement}\n获赞与收藏：{like}\n题目正确：{correct}\n编程正确：{accepted}'
+  return f'牛客ID：{handle}\n牛客用户名：{name}\n\n牛客竞赛\nRating：{rating}\nRating排名：{rating_rank}\n题目通过数：{accepted_c}\n总提交次数：{submit_cnt}\n参加过比赛次数：{contest_cnt}\n\n牛客主站\n成就值：{achievement}\n获赞与收藏：{like}\n题目正确：{correct}\n编程正确：{accepted}'
 
 
 def GetNowcoderPromise(handle):
