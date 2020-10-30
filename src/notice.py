@@ -1,5 +1,8 @@
-import os, threading
+import os, threading, datetime
 from promise import Promise
+from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
+from send_message import SendMessage
+
 
 notice_id = set()
 tmp_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notice.tmp')
@@ -51,3 +54,38 @@ def AddNoticeId(message_type, send_id):
 def RemoveNoticeId(message_type, send_id):
     notice_id.remove(message_type + "|" + send_id)
     UpdateNoticeId()
+
+
+# 调度器 使用北京时间
+scheduler = BackgroundScheduler(timezone="Asia/Shanghai")
+scheduler.start()
+# 消息去重管理
+msg_set = set()
+msg_set_lock = threading.Lock()
+
+
+def Report(date_time, msg):
+    global notice_id, notice_id_lock, msg_set, msg_set_lock
+    msg_in_set = str(date_time) + msg
+    with msg_set_lock:
+        if msg_in_set not in msg_set:
+            return
+        msg_set.remove(msg_in_set)
+    with notice_id_lock:
+        for a_notice_id in notice_id:
+            message_type, send_id = a_notice_id.split('|')
+            SendMessage(message_type, send_id, msg)
+
+
+def AddJob(date_time, msg):
+    global scheduler, msg_set, msg_set_lock
+    msg_in_set = str(date_time) + msg
+    with msg_set_lock:
+        if msg_in_set not in msg_set:
+            msg_set.add(msg_in_set)
+            scheduler.add_job(
+                Report,
+                trigger='date',
+                args=(date_time, msg),
+                run_date=date_time
+            )
