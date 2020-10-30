@@ -2,12 +2,14 @@ import config, common, time, notice
 from codeforces_contest import GetCodeforcesUpcomingContest
 from codeforces import GetCodeforcesPromise, CodeforcesDataToString
 from atcoder import GetAtcoderPromise, AtcoderDataToString
+from nowcoder import GetNowcoderPromise, NowcoderDataToString
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
 3.查询Codeforces最近比赛，样式：`cf`
 4.给该群添加提醒，样式：`notice`
-5.取消提醒，样式：`unnotice`'''
+5.取消提醒，样式：`unnotice`
+6.查询Nowcoder情况，样式：`nc 牛客ID`'''
 
 
 def GetFromPromise(future, expire, data_to_string_func, argv=()):
@@ -53,6 +55,8 @@ def Converse(text: str, **kwargs) -> str:
     elif f == 'unnotice':
         notice.RemoveNoticeId(kwargs["message_type"], kwargs["send_id"])
         result = 'remove notice ok'
+    elif f in {'nc', 'nowcoder'}:
+        result = GetFromPromise(GetNowcoderPromise(handle), 15.0, NowcoderDataToString, (handle,))
     # 未知输入
     if result is None:
         result = f'命令 {text} 发生未知错误，用法：\n{kMenu}'
