@@ -58,7 +58,7 @@ def CodeforcesUpcomingContestDataToString(data):
         contests = contests[:5]
     for contest in contests:
         start_time = time.localtime(contest["startTimeSeconds"])
-        ret += f'比赛名称: {contest["name"]}\n开始时间：{start_time.tm_year}年{start_time.tm_mon}月{start_time.tm_mday}日 {"%02d" % (start_time.tm_hour)}:{"%02d" % (start_time.tm_min)}\n比赛时长：{LengthToString(contest["durationSeconds"])}\n\n'
+        ret += f'比赛名称: {contest["name"]}\n比赛时间：{start_time.tm_year}年{start_time.tm_mon}月{start_time.tm_mday}日 {"%02d" % (start_time.tm_hour)}:{"%02d" % (start_time.tm_min)}\n比赛时长：{LengthToString(contest["durationSeconds"])}\n\n'
     return ret[:-2]
 
 

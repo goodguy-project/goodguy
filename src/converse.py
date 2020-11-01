@@ -4,6 +4,7 @@ from codeforces import GetCodeforcesPromise, CodeforcesDataToString
 from atcoder import GetAtcoderPromise, AtcoderDataToString
 from nowcoder import GetNowcoderPromise, NowcoderDataToString
 from nowcoder_contest import GetNowcoderContest
+from atcoder_contest import GetAtcoderContest
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
@@ -11,7 +12,8 @@ kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 4.给该群添加提醒，样式：`notice`
 5.取消提醒，样式：`unnotice`
 6.查询Nowcoder情况，样式：`nc 牛客ID`
-7.查询Nowcoder最近比赛，样式：`nc`'''
+7.查询Nowcoder最近比赛，样式：`nc`
+8.查询Atcoder最近比赛，样式：`atc`'''
 
 
 def GetFromPromise(future, expire, data_to_string_func, argv=()):
@@ -48,7 +50,10 @@ def Converse(text: str, **kwargs) -> str:
             result = GetFromPromise(GetCodeforcesPromise(handle.lower()), 15.0, CodeforcesDataToString, (handle,))
     # 查询Atcoder信息
     elif f in {'atc', 'atcoder'}:
-        result = GetFromPromise(GetAtcoderPromise(handle.lower()), 15.0, AtcoderDataToString, (handle,))
+        if handle == '':
+            result = GetAtcoderContest()
+        else:
+            result = GetFromPromise(GetAtcoderPromise(handle.lower()), 15.0, AtcoderDataToString, (handle,))
     elif f == 'print_message':
         result = f'message_type: {kwargs["message_type"]}\nsend_id: {kwargs["send_id"]}'
     elif f == 'notice':

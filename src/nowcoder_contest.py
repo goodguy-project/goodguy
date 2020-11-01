@@ -83,5 +83,6 @@ def GetNowcoderContest():
   global nowcoder_contest_cache
   return NowcoderAllContestToString(nowcoder_contest_cache.Get())
 
+
 if __name__ == "__main__":
   print(GetNowcoderAllContest())
