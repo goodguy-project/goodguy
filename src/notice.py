@@ -85,6 +85,7 @@ def AddJob(date_time, msg):
     with msg_set_lock:
         if msg_in_set not in msg_set:
             msg_set.add(msg_in_set)
+            print(msg_in_set)
             scheduler.add_job(
                 Report,
                 trigger='date',
