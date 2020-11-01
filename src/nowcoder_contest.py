@@ -10,7 +10,7 @@ def GetStartTimeFromStr(msg: str) -> datetime.datetime:
   return datetime.datetime.strptime(msg[5:21], "%Y-%m-%d %H:%M")
 
 
-def HandleElement(element: etree._Element) -> tuple:
+def HandleElement(element: etree._Element) -> dict:
   contest = etree.HTML(etree.tostring(element))
   data = {
     "name": contest.xpath('//a')[0].text,
@@ -22,7 +22,7 @@ def HandleElement(element: etree._Element) -> tuple:
   return data
 
 
-def GetNowcoderOfficialContest():
+def GetNowcoderOfficialContest() -> list:
   html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=13", headers=header, proxies=proxy).text
   obj = etree.HTML(html)
   contests = obj.xpath('//div[contains(@class, "js-current")]//div[@class="platform-item-cont"]')
@@ -32,7 +32,7 @@ def GetNowcoderOfficialContest():
   return ret
 
 
-def GetNowcoderUnofficialContest():
+def GetNowcoderUnofficialContest() -> list:
   html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=14", headers=header, proxies=proxy).text
   obj = etree.HTML(html)
   contests = obj.xpath('//div[contains(@class, "js-current")]//div[@class="platform-item-cont"]')
