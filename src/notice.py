@@ -15,7 +15,7 @@ def LoadFromNoticeId():
     if not os.path.exists(tmp_file_path):
         return
     with notice_id_lock:
-        # 重制
+        # 重置
         notice_id = set()
         # 读取数据
         with open(tmp_file_path, 'r', encoding='utf-8') as f:

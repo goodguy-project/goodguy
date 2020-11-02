@@ -12,5 +12,6 @@
 > 6.查询Nowcoder情况，样式：`nc 牛客ID`  
 > 7.查询Nowcoder最近比赛，样式：`nc`  
 > 8.查询AtCoder最近比赛，样式：`atc`  
+> 9.查询Nowcoder最近热帖，样式：`ncp`
 
 ## 使用方法

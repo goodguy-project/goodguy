@@ -5,6 +5,7 @@ from atcoder import GetAtcoderPromise, AtcoderDataToString
 from nowcoder import GetNowcoderPromise, NowcoderDataToString
 from nowcoder_contest import GetNowcoderContest
 from atcoder_contest import GetAtcoderContest
+from nowcoder_popular import GetNowcoderPopular
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
@@ -13,7 +14,8 @@ kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 5.取消提醒，样式：`unnotice`
 6.查询Nowcoder情况，样式：`nc 牛客ID`
 7.查询Nowcoder最近比赛，样式：`nc`
-8.查询Atcoder最近比赛，样式：`atc`'''
+8.查询Atcoder最近比赛，样式：`atc`
+9.查询Nowcoder最近热帖，样式：`ncp`'''
 
 
 def GetFromPromise(future, expire, data_to_string_func, argv=()):
@@ -48,25 +50,36 @@ def Converse(text: str, **kwargs) -> str:
         # 查询Codeforces用户
         else:
             result = GetFromPromise(GetCodeforcesPromise(handle.lower()), 15.0, CodeforcesDataToString, (handle,))
-    # 查询Atcoder信息
+    # 查询AtCoder信息
     elif f in {'atc', 'atcoder'}:
+        # 查询AtCoder最近比赛
         if handle == '':
             result = GetAtcoderContest()
+        # 查询AtCoder用户分数
         else:
             result = GetFromPromise(GetAtcoderPromise(handle.lower()), 15.0, AtcoderDataToString, (handle,))
+    # 用于Debug
     elif f == 'print_message':
         result = f'message_type: {kwargs["message_type"]}\nsend_id: {kwargs["send_id"]}'
+    # 消息提醒该群聊或用户
     elif f == 'notice':
         notice.AddNoticeId(kwargs["message_type"], kwargs["send_id"])
         result = 'notice ok'
+    # 取消提醒
     elif f == 'unnotice':
         notice.RemoveNoticeId(kwargs["message_type"], kwargs["send_id"])
         result = 'remove notice ok'
+    # 查询NowCoder信息
     elif f in {'nc', 'nowcoder'}:
+        # 查询NowCoder最近比赛
         if handle == '':
             result = GetNowcoderContest()
+        # 查询NowCoder用户
         else:
             result = GetFromPromise(GetNowcoderPromise(handle), 15.0, NowcoderDataToString, (handle,))
+    # 查询牛客网热榜
+    elif f in {'ncp', 'nowcoder_popular'}:
+        result = GetNowcoderPopular()
     # 未知输入
     if result is None:
         result = f'命令 {text} 发生未知错误，用法：\n{kMenu}'
