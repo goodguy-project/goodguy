@@ -26,7 +26,7 @@ def HandleElement(element: etree._Element) -> dict:
     "name": contest.xpath('//a')[0].text,
     "time": contest.xpath('//li[@class="match-time-icon"]')[0].text.replace('\n', ''),
     "user": contest.xpath('//li[@class="user-icon"]')[0].text,
-    "url":  'https://nowcoder.com' + contest.xpath('//a/@href')[0]
+    "url": 'https://nowcoder.com' + contest.xpath('//a/@href')[0]
   }
   data["start"] = GetStartTimeFromStr(data["time"])
   data["notice"] = data["start"] - datetime.timedelta(hours=2)
@@ -35,7 +35,8 @@ def HandleElement(element: etree._Element) -> dict:
 
 
 def GetNowcoderOfficialContest() -> list:
-  html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=13", headers=header, proxies=proxy).text
+  html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=13", headers=header,
+                      proxies=proxy).text
   obj = etree.HTML(html)
   contests = obj.xpath('//div[contains(@class, "js-current")]//div[@class="platform-item-cont"]')
   ret = []
@@ -45,7 +46,8 @@ def GetNowcoderOfficialContest() -> list:
 
 
 def GetNowcoderUnofficialContest() -> list:
-  html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=14", headers=header, proxies=proxy).text
+  html = requests.get("https://ac.nowcoder.com/acm/contest/vip-index?topCategoryFilter=14", headers=header,
+                      proxies=proxy).text
   obj = etree.HTML(html)
   contests = obj.xpath('//div[contains(@class, "js-current")]//div[@class="platform-item-cont"]')
   ret = []

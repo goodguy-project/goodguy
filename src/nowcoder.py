@@ -82,25 +82,27 @@ def GetNowcoderData(handle):
     'profile': promise_profile.result
   }
 
+
 nowcoder_cache = Cache(GetNowcoderData)
 
 
 def NowcoderDataToString(handle, data):
-  rating      = data['acm1']['rating']
+  rating = data['acm1']['rating']
   rating_rank = data['acm1']['rating_rank']
   contest_cnt = data['acm1']['contest_cnt']
-  accepted_c  = data['acm2']['accepted']
-  submit_cnt  = data['acm2']['submit_cnt']
-  name        = data['profile']['name']
+  accepted_c = data['acm2']['accepted']
+  submit_cnt = data['acm2']['submit_cnt']
+  name = data['profile']['name']
   achievement = data['profile']['achievement']
-  like        = data['profile']['like']
-  correct     = data['profile']['correct']
-  accepted    = data['profile']['accepted']
+  like = data['profile']['like']
+  correct = data['profile']['correct']
+  accepted = data['profile']['accepted']
   return f'牛客ID：{handle}\n牛客用户名：{name}\n\n牛客竞赛\nRating：{rating}\nRating排名：{rating_rank}\n题目通过数：{accepted_c}\n总提交次数：{submit_cnt}\n参加过比赛次数：{contest_cnt}\n\n牛客主站\n成就值：{achievement}\n获赞与收藏：{like}\n题目正确：{correct}\n编程正确：{accepted}'
 
 
 def GetNowcoderPromise(handle):
   return nowcoder_cache.GetPromise(handle)
+
 
 if __name__ == "__main__":
   print(NowcoderDataToString(6693394, GetNowcoderData(6693394)))
