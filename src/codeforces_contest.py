@@ -1,5 +1,5 @@
 import time, requests, json, common, datetime
-from promise import Promise
+from my_promise import Promise
 from cache import Cache, AutoCache
 from notice import AddJob
 

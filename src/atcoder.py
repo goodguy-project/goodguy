@@ -1,6 +1,6 @@
-import requests, common, sys
+import requests, common
 from lxml import etree
-from promise import Promise
+from my_promise import Promise
 from cache import Cache
 
 header = common.header

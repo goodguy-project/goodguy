@@ -1,4 +1,4 @@
-from promise import Promise
+from my_promise import Promise
 from converse import Converse
 from send_message import SendMessage
 

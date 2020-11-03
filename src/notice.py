@@ -1,6 +1,6 @@
-import os, threading, datetime
-from promise import Promise
-from apscheduler.schedulers.background import BackgroundScheduler, BlockingScheduler
+import os, threading
+from my_promise import Promise
+from apscheduler.schedulers.background import BackgroundScheduler
 from send_message import SendMessage
 
 notice_id = set()

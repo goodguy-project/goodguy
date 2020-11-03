@@ -1,6 +1,6 @@
 import requests, json, common, sys, threading
 from cache import Cache
-from promise import Promise
+from my_promise import Promise
 
 header = common.header
 proxy = common.proxy

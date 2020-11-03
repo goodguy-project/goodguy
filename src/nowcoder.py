@@ -1,9 +1,9 @@
 # 牛客爬虫 仅支持牛客id（纯数字）
 import requests, common, json
-from promise import Promise
+from my_promise import Promise
 from lxml import etree
 from cache import Cache
-from promise import Promise
+from my_promise import Promise
 
 header = common.header
 proxy = common.proxy

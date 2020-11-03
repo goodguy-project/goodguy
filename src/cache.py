@@ -1,6 +1,6 @@
 # 缓存
 import threading, common, config, time
-from promise import Promise
+from my_promise import Promise
 
 
 class Cache(object):
