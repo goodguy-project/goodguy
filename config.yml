@@ -6,3 +6,12 @@ app:
 
 http:
   port: ~
+
+email:
+  from: ~
+  to:
+    - ~
+    - ~
+  smtp:
+    server: smtp.qq.com
+    port: 465
