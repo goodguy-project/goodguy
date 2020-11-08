@@ -1,5 +1,6 @@
-import config, requests, json
-from cache import AutoCache
+import requests, json
+import goodguy.util.config as config
+from goodguy.util.cache import AutoCache
 
 
 def GetTenantAccessToken():

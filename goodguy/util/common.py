@@ -1,5 +1,6 @@
 # 一些公用的方法和变量
-import os, yaml, time, config
+import os, yaml, time
+import goodguy.util.config as config
 
 # 爬虫header
 header = {

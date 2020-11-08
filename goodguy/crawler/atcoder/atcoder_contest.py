@@ -1,7 +1,8 @@
-import requests, common, datetime
+import requests, datetime
+import goodguy.util.common as common
 from lxml import etree
-from notice import AddJob
-from cache import AutoCache
+from goodguy.util.notice import AddJob
+from goodguy.util.cache import AutoCache
 
 header = common.header
 proxy = common.proxy

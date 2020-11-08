@@ -1,4 +1,5 @@
-import config, smtplib
+import smtplib
+import goodguy.util.config as config
 from email.header import Header
 from email.utils import parseaddr, formataddr
 

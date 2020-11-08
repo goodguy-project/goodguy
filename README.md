@@ -1,4 +1,4 @@
-# EigawaNoa
+# GoodGuy（好家伙）
 
 ## 简介
 
@@ -15,3 +15,5 @@
 > 9.查询Nowcoder最近热帖，样式：`ncp`
 
 ## 使用方法
+
+<!-- 需要把根目录（GoodGuy）放在环境变量PYTHONPATH中 -->

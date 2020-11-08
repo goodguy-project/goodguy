@@ -1,6 +1,7 @@
-import requests, json, common, sys, threading
-from cache import Cache
-from my_promise import Promise
+import requests, json, sys, threading
+import goodguy.util.common as common
+from goodguy.util.cache import Cache
+from goodguy.util.my_promise import Promise
 
 header = common.header
 proxy = common.proxy

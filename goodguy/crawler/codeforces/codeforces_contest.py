@@ -1,7 +1,8 @@
-import time, requests, json, common, datetime
-from my_promise import Promise
-from cache import Cache, AutoCache
-from notice import AddJob
+import time, requests, json, datetime
+from goodguy.util.my_promise import Promise
+from goodguy.util.cache import Cache, AutoCache
+from goodguy.util.notice import AddJob
+import goodguy.util.common as common
 
 header = common.header
 proxy = common.proxy

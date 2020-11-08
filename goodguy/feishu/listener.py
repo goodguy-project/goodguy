@@ -1,4 +1,6 @@
-import json, message, config, requests
+import json, requests
+import goodguy.feishu.message as message
+import goodguy.util.config as config
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 
@@ -56,7 +58,7 @@ def run():
   port = config.GetConfig("http", "port")
   server_address = ('', port)
   httpd = HTTPServer(server_address, RequestHandler)
-  print("EigawaNoa is running...")
+  print("GoodGuy is running...")
   httpd.serve_forever()
 
 

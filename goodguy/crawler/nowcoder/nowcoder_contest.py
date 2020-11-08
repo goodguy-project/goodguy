@@ -1,8 +1,9 @@
-import requests, common, datetime
-from my_promise import Promise
+import requests, datetime
+import goodguy.util.common as common
 from lxml import etree
-from cache import AutoCache
-from notice import AddJob
+from goodguy.util.my_promise import Promise
+from goodguy.util.cache import AutoCache
+from goodguy.util.notice import AddJob
 
 header = common.header
 proxy = common.proxy

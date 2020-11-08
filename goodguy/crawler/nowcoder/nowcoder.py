@@ -1,9 +1,9 @@
 # 牛客爬虫 仅支持牛客id（纯数字）
-import requests, common, json
-from my_promise import Promise
+import requests, json
+import goodguy.util.common as common
 from lxml import etree
-from cache import Cache
-from my_promise import Promise
+from goodguy.util.cache import Cache
+from goodguy.util.my_promise import Promise
 
 header = common.header
 proxy = common.proxy

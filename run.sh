@@ -13,4 +13,4 @@ else
   fi
 fi
 
-python3 "$this_dir/src/listener.py"
+python3 "$this_dir/goodguy/feishu/listener.py"

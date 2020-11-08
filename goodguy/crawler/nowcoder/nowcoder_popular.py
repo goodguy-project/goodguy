@@ -1,6 +1,7 @@
-import requests, common
+import requests
+import goodguy.util.common as common
 from lxml import etree
-from cache import AutoCache
+from goodguy.util.cache import AutoCache
 
 header = common.header
 proxy = common.proxy

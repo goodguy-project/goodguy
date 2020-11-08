@@ -1,7 +1,8 @@
-import requests, common
+import requests
+import goodguy.util.common as common
 from lxml import etree
-from my_promise import Promise
-from cache import Cache
+from goodguy.util.my_promise import Promise
+from goodguy.util.cache import Cache
 
 header = common.header
 proxy = common.proxy

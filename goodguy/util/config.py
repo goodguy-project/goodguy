@@ -5,7 +5,7 @@ conf = None
 
 def ReloadConfig():
   global conf
-  dir_name = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+  dir_name = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
   with open(os.path.join(dir_name, 'config.yml'), 'r', encoding='utf-8') as config_file:
     conf = yaml.load(config_file.read(), yaml.FullLoader)
 

@@ -1,6 +1,6 @@
-from my_promise import Promise
-from converse import Converse
-from send_message import SendMessage
+from goodguy.util.my_promise import Promise
+from goodguy.util.converse import Converse
+from goodguy.feishu.send_message import SendMessage
 
 
 def HandleMessageThread(message_type, send_id, text=''):

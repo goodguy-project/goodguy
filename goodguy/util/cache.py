@@ -1,6 +1,8 @@
 # 缓存
-import threading, common, config, time
-from my_promise import Promise
+import threading, time
+import goodguy.util.common as common
+import goodguy.util.config as config
+from goodguy.util.my_promise import Promise
 
 
 class Cache(object):

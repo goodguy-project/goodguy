@@ -1,7 +1,9 @@
 import os, threading
-from my_promise import Promise
+from goodguy.util.my_promise import Promise
 from apscheduler.schedulers.background import BackgroundScheduler
-from send_message import SendMessage
+from goodguy.feishu.send_message import SendMessage
+from goodguy.util.send_email import SendEmail
+from email.mime.text import MIMEText
 
 notice_id = set()
 tmp_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notice.tmp')
@@ -78,6 +80,8 @@ def Report(date_time, msg):
     for a_notice_id in notice_id:
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
+    email_msg =  MIMEText(msg, 'plain', 'utf-8')
+    SendEmail(email_msg)
 
 
 def AddJob(date_time, msg):

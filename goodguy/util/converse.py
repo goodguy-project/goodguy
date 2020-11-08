@@ -1,11 +1,14 @@
-import config, common, time, notice
-from codeforces_contest import GetCodeforcesUpcomingContest
-from codeforces import GetCodeforcesPromise, CodeforcesDataToString
-from atcoder import GetAtcoderPromise, AtcoderDataToString
-from nowcoder import GetNowcoderPromise, NowcoderDataToString
-from nowcoder_contest import GetNowcoderContest
-from atcoder_contest import GetAtcoderContest
-from nowcoder_popular import GetNowcoderPopular
+import time
+import goodguy.util.config as config
+import goodguy.util.common as common
+import goodguy.util.notice as notice
+from goodguy.crawler.codeforces.codeforces_contest import GetCodeforcesUpcomingContest
+from goodguy.crawler.codeforces.codeforces import GetCodeforcesPromise, CodeforcesDataToString
+from goodguy.crawler.atcoder.atcoder import GetAtcoderPromise, AtcoderDataToString
+from goodguy.crawler.atcoder.atcoder_contest import GetAtcoderContest
+from goodguy.crawler.nowcoder.nowcoder import GetNowcoderPromise, NowcoderDataToString
+from goodguy.crawler.nowcoder.nowcoder_contest import GetNowcoderContest
+from goodguy.crawler.nowcoder.nowcoder_popular import GetNowcoderPopular
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
