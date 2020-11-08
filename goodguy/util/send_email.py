@@ -19,8 +19,9 @@ def SendEmailFunc(from_addr, to_addrs: list, password, smtp_server, smtp_port, m
 def SendEmail(msg):
   from_addr = config.GetConfig('email', 'from')
   to_addrs = config.GetConfig('email', 'to')
+  password = config.GetConfig('email', 'password')
   smtp_server = config.GetConfig('email', 'smtp', 'server')
   smtp_port = config.GetConfig('email', 'smtp', 'port')
   if to_addrs is None or to_addrs == []:
     return
-  SendEmailFunc(from_addr, to_addrs, smtp_port, smtp_server, smtp_port, msg)
+  SendEmailFunc(from_addr, to_addrs, password, smtp_server, smtp_port, msg)

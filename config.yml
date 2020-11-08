@@ -12,6 +12,7 @@ email:
   to:
     - ~
     - ~
+  password: ~
   smtp:
-    server: smtp.qq.com
-    port: 465
+    server: ~
+    port: ~
