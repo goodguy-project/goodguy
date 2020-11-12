@@ -69,7 +69,7 @@ msg_set = set()
 msg_set_lock = threading.Lock()
 
 
-def Report(date_time, msg):
+def Report(date_time, msg: str):
   global notice_id, notice_id_lock, msg_set, msg_set_lock
   msg_in_set = str(date_time) + msg
   with msg_set_lock:
@@ -80,7 +80,7 @@ def Report(date_time, msg):
     for a_notice_id in notice_id:
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
-    email_msg =  MIMEText(msg, 'plain', 'utf-8')
+    email_msg =  MIMEText(msg.replace('\n', '\r\n'), 'plain', 'utf-8')
     SendEmail(email_msg)
 
 
