@@ -3,7 +3,9 @@ from goodguy.util.my_promise import Promise
 from apscheduler.schedulers.background import BackgroundScheduler
 from goodguy.feishu.send_message import SendMessage
 from goodguy.util.send_email import SendEmail
+from email.header import Header
 from email.mime.text import MIMEText
+from email.utils import parseaddr, formataddr
 
 notice_id = set()
 tmp_file_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'notice.tmp')
@@ -69,6 +71,11 @@ msg_set = set()
 msg_set_lock = threading.Lock()
 
 
+def FormatAddr(s):
+  name, addr = parseaddr(s)
+  return formataddr((Header(name, 'utf-8').encode(), addr))
+
+
 def Report(date_time, msg: str):
   global notice_id, notice_id_lock, msg_set, msg_set_lock
   msg_in_set = str(date_time) + msg
@@ -81,6 +88,8 @@ def Report(date_time, msg: str):
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
     email_msg =  MIMEText(msg.replace('\n', '\r\n'), 'plain', 'utf-8')
+    email_msg['From'] = 'ConanYu <ConanYu@foxmail.com>'
+    email_msg['Subject'] = '比赛邮件提醒'
     SendEmail(email_msg)
 
 
