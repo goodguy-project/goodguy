@@ -14,6 +14,10 @@
 > 8.查询AtCoder最近比赛，样式：`atc`  
 > 9.查询Nowcoder最近热帖，样式：`ncp`
 
+可在`config.yml`中设置邮件提醒
+
 ## 使用方法
 
 <!-- 需要把根目录（GoodGuy）放在环境变量PYTHONPATH中 -->
+
+## 设计思路
