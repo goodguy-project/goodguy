@@ -31,7 +31,7 @@ def HandleElement(element: etree._Element) -> dict:
   }
   data["start"] = GetStartTimeFromStr(data["time"])
   data["notice"] = data["start"] - datetime.timedelta(hours=2)
-  AddJob(data["notice"], NoticeContestMessge(data))
+  AddJob(data["notice"], NoticeContestMessge(data), is_send_email=False)
   return data
 
 

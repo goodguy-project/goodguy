@@ -76,7 +76,7 @@ def FormatAddr(s):
   return formataddr((Header(name, 'utf-8').encode(), addr))
 
 
-def Report(date_time, msg: str):
+def Report(date_time, msg: str, is_send_email=True):
   global notice_id, notice_id_lock, msg_set, msg_set_lock
   msg_in_set = str(date_time) + msg
   with msg_set_lock:
@@ -87,15 +87,17 @@ def Report(date_time, msg: str):
     for a_notice_id in notice_id:
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
-    email_msg =  MIMEText(msg.replace('\n', '\r\n'), 'plain', 'utf-8')
+    email_msg = MIMEText(msg.replace('\n', '\r\n'), 'plain', 'utf-8')
     email_msg['From'] = 'ConanYu <ConanYu@foxmail.com>'
     email_msg['Subject'] = '比赛邮件提醒'
-    SendEmail(email_msg)
+    if is_send_email:
+      SendEmail(email_msg)
 
 
-def AddJob(date_time, msg):
+def AddJob(date_time, msg, *args, **kwargs):
   global scheduler, msg_set, msg_set_lock
   msg_in_set = str(date_time) + msg
+  is_send_email = kwargs.get('is_send_email', True)
   with msg_set_lock:
     if msg_in_set not in msg_set:
       msg_set.add(msg_in_set)
@@ -103,6 +105,6 @@ def AddJob(date_time, msg):
       scheduler.add_job(
         Report,
         trigger='date',
-        args=(date_time, msg),
+        args=(date_time, msg, is_send_email),
         run_date=date_time
       )
