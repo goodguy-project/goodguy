@@ -24,4 +24,7 @@ def SendEmail(msg):
   smtp_port = config.GetConfig('email', 'smtp', 'port')
   if to_addrs is None or to_addrs == []:
     return
-  SendEmailFunc(from_addr, to_addrs, password, smtp_server, smtp_port, msg)
+  msg['From'] = format_addr('ConanYu <ConanYu@foxmail.com>')
+  for to_addr in to_addrs:
+    msg['To'] = format_addr(f'{to_addr} <{to_addr}>')
+    SendEmailFunc(from_addr, [to_addr], password, smtp_server, smtp_port, msg)

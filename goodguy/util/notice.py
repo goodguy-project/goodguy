@@ -88,7 +88,6 @@ def Report(date_time, msg: str, is_send_email=True):
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
     email_msg = MIMEText(msg.replace('\n', '\r\n'), 'plain', 'utf-8')
-    email_msg['From'] = 'ConanYu <ConanYu@foxmail.com>'
     email_msg['Subject'] = '比赛邮件提醒'
     if is_send_email:
       SendEmail(email_msg)
