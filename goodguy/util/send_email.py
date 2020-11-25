@@ -4,7 +4,7 @@ from email.header import Header
 from email.utils import parseaddr, formataddr
 
 
-def format_addr(s):
+def FormatAddr(s):
   name, addr = parseaddr(s)
   return formataddr((Header(name, 'utf-8').encode(), addr))
 
@@ -16,7 +16,8 @@ def SendEmailFunc(from_addr, to_addrs: list, password, smtp_server, smtp_port, m
   server.quit()
 
 
-def SendEmail(msg):
+# limit: 每封邮件限制人数
+def SendEmail(msg, limit=10):
   from_addr = config.GetConfig('email', 'from')
   to_addrs = config.GetConfig('email', 'to')
   password = config.GetConfig('email', 'password')
@@ -24,7 +25,9 @@ def SendEmail(msg):
   smtp_port = config.GetConfig('email', 'smtp', 'port')
   if to_addrs is None or to_addrs == []:
     return
-  msg['From'] = format_addr('ConanYu <ConanYu@foxmail.com>')
-  for to_addr in to_addrs:
-    msg['To'] = format_addr(f'{to_addr} <{to_addr}>')
-    SendEmailFunc(from_addr, [to_addr], password, smtp_server, smtp_port, msg)
+  msg['From'] = FormatAddr('ConanYu@foxmail.com')
+  while len(to_addrs) > 0:
+    cur_to_addrs = to_addrs[:limit]
+    msg['To'] = FormatAddr(', '.join(cur_to_addrs))
+    SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, msg)
+    to_addrs = to_addrs[limit:]
