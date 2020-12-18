@@ -13,6 +13,7 @@
 > 7.查询Nowcoder最近比赛，样式：`nc`  
 > 8.查询AtCoder最近比赛，样式：`atc`  
 > 9.查询Nowcoder最近热帖，样式：`ncp`
+> 10.查询Leetcode最近比赛，样式：`lc`
 
 可在`config.yml`中设置邮件提醒
 
