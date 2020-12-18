@@ -9,6 +9,7 @@ from goodguy.crawler.atcoder.atcoder_contest import GetAtcoderContest
 from goodguy.crawler.nowcoder.nowcoder import GetNowcoderPromise, NowcoderDataToString
 from goodguy.crawler.nowcoder.nowcoder_contest import GetNowcoderContest
 from goodguy.crawler.nowcoder.nowcoder_popular import GetNowcoderPopular
+from goodguy.crawler.leetcode.leetcode_contest import GetLeetcodeUpcomingContest
 
 kMenu = '''1.查询用户Codeforces情况，样式：`cf 用户名`
 2.查询用户Atcoder情况，样式：`atc 用户名`
@@ -83,6 +84,8 @@ def Converse(text: str, **kwargs) -> str:
   # 查询牛客网热榜
   elif f in {'ncp', 'nowcoder_popular'}:
     result = GetNowcoderPopular()
+  elif f in {'lc', 'leetcode'}:
+    result = GetLeetcodeUpcomingContest()
   # 未知输入
   if result is None:
     result = f'命令 {text} 发生未知错误，用法：\n{kMenu}'
