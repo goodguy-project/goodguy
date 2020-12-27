@@ -13,4 +13,6 @@ else
   fi
 fi
 
+export PYTHONPATH=$PYTHONPATH:$this_dir
+
 python3 "$this_dir/goodguy/feishu/listener.py"
