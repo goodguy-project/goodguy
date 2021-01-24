@@ -2,6 +2,7 @@ import smtplib
 import goodguy.util.config as config
 from email.header import Header
 from email.utils import parseaddr, formataddr
+from email.mime.text import MIMEText
 
 
 def FormatAddr(s):
@@ -17,7 +18,7 @@ def SendEmailFunc(from_addr, to_addrs: list, password, smtp_server, smtp_port, m
 
 
 # limit: 每封邮件限制人数
-def SendEmail(msg, limit=10):
+def SendEmail(msg: str, limit=10):
   from_addr = config.GetConfig('email', 'from')
   to_addrs = config.GetConfig('email', 'to')
   password = config.GetConfig('email', 'password')
@@ -25,9 +26,11 @@ def SendEmail(msg, limit=10):
   smtp_port = config.GetConfig('email', 'smtp', 'port')
   if to_addrs is None or to_addrs == []:
     return
-  msg['From'] = FormatAddr('ConanYu@foxmail.com')
   while len(to_addrs) > 0:
+    mail = MIMEText(msg, 'plain', 'utf-8')
+    mail['Subject'] = '比赛邮件提醒'
+    mail['From'] = FormatAddr('ConanYu@foxmail.com')
     cur_to_addrs = to_addrs[:limit]
-    msg['To'] = FormatAddr(', '.join(cur_to_addrs))
-    SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, msg)
+    mail['To'] = FormatAddr(', '.join(cur_to_addrs))
+    SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, mail)
     to_addrs = to_addrs[limit:]
