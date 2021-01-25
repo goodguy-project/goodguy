@@ -31,6 +31,6 @@ def SendEmail(msg: str, limit=10):
     mail['Subject'] = '比赛邮件提醒'
     mail['From'] = FormatAddr('ConanYu@foxmail.com')
     cur_to_addrs = to_addrs[:limit]
-    mail['To'] = FormatAddr(', '.join(cur_to_addrs))
+    mail['To'] = ', '.join(cur_to_addrs)
     SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, mail)
     to_addrs = to_addrs[limit:]
