@@ -29,7 +29,7 @@ def SendEmail(msg: str, limit=10):
   while len(to_addrs) > 0:
     mail = MIMEText(msg, 'plain', 'utf-8')
     mail['Subject'] = '比赛邮件提醒'
-    mail['From'] = FormatAddr('ConanYu@foxmail.com')
+    mail['From'] = from_addr
     cur_to_addrs = to_addrs[:limit]
     mail['To'] = ', '.join(cur_to_addrs)
     SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, mail)
