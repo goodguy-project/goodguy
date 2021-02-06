@@ -1,4 +1,4 @@
-import smtplib
+import smtplib, time
 import goodguy.util.config as config
 from email.header import Header
 from email.utils import parseaddr, formataddr
@@ -34,3 +34,4 @@ def SendEmail(msg: str, limit=10):
     mail['To'] = ', '.join(cur_to_addrs)
     SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, mail)
     to_addrs = to_addrs[limit:]
+    time.sleep(GetConfig("email", "delay", default=61.0))

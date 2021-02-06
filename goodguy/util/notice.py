@@ -88,9 +88,9 @@ def Report(date_time, msg: str, is_send_email=True):
     for a_notice_id in notice_id:
       message_type, send_id = a_notice_id.split('|')
       SendMessage(message_type, send_id, msg)
+  if is_send_email:
     mail_text = msg.replace('\n', '\r\n')
-    if is_send_email:
-      SendEmail(mail_text, GetConfig("email", "limit", default=10))
+    Promise(SendEmail, (mail_text, GetConfig("email", "limit", default=10))).start()
 
 
 def AddJob(date_time, msg, *args, **kwargs):
