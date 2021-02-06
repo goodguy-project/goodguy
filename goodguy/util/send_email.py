@@ -34,4 +34,4 @@ def SendEmail(msg: str, limit=10):
     mail['To'] = ', '.join(cur_to_addrs)
     SendEmailFunc(from_addr, cur_to_addrs, password, smtp_server, smtp_port, mail)
     to_addrs = to_addrs[limit:]
-    time.sleep(GetConfig("email", "delay", default=61.0))
+    time.sleep(config.GetConfig("email", "delay", default=61.0))
