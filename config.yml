@@ -16,3 +16,4 @@ email:
   smtp:
     server: ~
     port: ~
+  limit: ~

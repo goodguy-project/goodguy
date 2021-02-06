@@ -3,6 +3,7 @@ from goodguy.util.my_promise import Promise
 from apscheduler.schedulers.background import BackgroundScheduler
 from goodguy.feishu.send_message import SendMessage
 from goodguy.util.send_email import SendEmail
+from goodguy.util.config import GetConfig
 from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
@@ -89,7 +90,7 @@ def Report(date_time, msg: str, is_send_email=True):
       SendMessage(message_type, send_id, msg)
     mail_text = msg.replace('\n', '\r\n')
     if is_send_email:
-      SendEmail(mail_text)
+      SendEmail(mail_text, GetConfig("email", "limit", default=10))
 
 
 def AddJob(date_time, msg, *args, **kwargs):
