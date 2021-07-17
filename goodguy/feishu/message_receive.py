@@ -17,13 +17,6 @@ def message_receive(body):
                 text = text.replace(mention["key"], "")
         except KeyError:
             pass
-        print(body, text)
-        # send_message({
-        #     "msg_type": "text",
-        #     "content": json.dumps({
-        #         "text": text,
-        #     }),
-        #     "receive_id": chat_id,
-        # }, 'chat_id')
+        # TODO: 调用order进而send_message
     except Exception as e:
         logging.exception(e)
