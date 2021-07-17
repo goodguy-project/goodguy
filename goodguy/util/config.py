@@ -1,45 +1,41 @@
-import yaml, os
-
-conf = None
-
-
-def ReloadConfig():
-  global conf
-  dir_name = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-  with open(os.path.join(dir_name, 'config.yml'), 'r', encoding='utf-8') as config_file:
-    conf = yaml.load(config_file.read(), yaml.FullLoader)
-  print(conf)
+import os
+import yaml
+from copy import deepcopy
+from readerwriterlock.rwlock import RWLockFairD
 
 
-ReloadConfig()
+class Config(object):
+    def __init__(self, path: str):
+        self.__lock = RWLockFairD()
+        self.__conf = None
+        self.__path = path
+        self.reload_config(path)
 
-"""
-获取配置，如以下yaml配置文件：
-```yaml
-a: 1
-b:
-  - 2
-  - 3
-```
-`config.GetConfig("b", 1)`会得到3
-"""
+    def reload_config(self, path: str) -> None:
+        with open(path, 'r', encoding='utf-8') as config_file:
+            conf = yaml.load(config_file.read(), yaml.FullLoader)
+        with self.__lock.gen_wlock():
+            self.__conf = conf
+
+    def get(self, path: str, default=None):
+        args = path.split('.')
+        with self.__lock.gen_rlock():
+            ret = self.__conf
+            for arg in args:
+                if arg == '':
+                    continue
+                if ret is None:
+                    return default
+                try:
+                    ret = ret[arg]
+                except:
+                    return default
+            return deepcopy(ret)
 
 
-def GetConfig(*args, **kwargs):
-  global conf
-  ret = conf
-  for arg in args:
-    if ret is None:
-      return kwargs.get("default", None)
-    try:
-      ret = ret[arg]
-    except Exception:
-      ret = None
-      pass
-    if ret is None:
-      return kwargs.get("default", None)
-  return ret
+GLOBAL_CONFIG = Config(
+    os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'config.yml'))
 
 
-if __name__ == "__main__":
-  print(GetConfig('app', 'id'))
+if __name__ == '__main__':
+    print(GLOBAL_CONFIG.get("apple"))
