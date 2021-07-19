@@ -32,7 +32,7 @@ def order(text: str) -> Dict:
         else:
             return {
                 "type": 'send',
-                "text": get_recent_contest('codeforces'),
+                "text": str(get_recent_contest('codeforces')),
             }
     # 未知输入
     return {
