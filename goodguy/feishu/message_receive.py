@@ -12,6 +12,7 @@ def message_receive(body):
         chat_id = body["event"]["message"]["chat_id"]
         # 仅支持text类content
         text: str = json.loads(body["event"]["message"]["content"])["text"]
+        logging.debug(chat_id)
         # 去除at信息
         try:
             for mention in body["event"]["message"]["mentions"]:

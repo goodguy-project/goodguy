@@ -9,6 +9,7 @@ def order(text: str) -> Dict:
     text_split = text.split()
     op = '' if len(text_split) <= 0 else text_split[0]
     handle = '' if len(text_split) <= 1 else text_split[1]
+    logging.debug(f"text: {text}\nop: {op}\nhandle: {handle}")
     op = op.lower()
     # 查询菜单
     if op in {'菜单', 'menu', ''}:
@@ -24,8 +25,11 @@ def order(text: str) -> Dict:
             "type": 'send',
             "text": 'reload config succeed',
         }
+    # codeforces
     elif op in {'cf', 'codeforces'}:
         if handle != '':
+            pass
+        else:
             return {
                 "type": 'send',
                 "text": get_recent_contest('codeforces'),
