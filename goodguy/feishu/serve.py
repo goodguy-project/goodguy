@@ -43,8 +43,8 @@ class FeishuRequestHandler(BaseHTTPRequestHandler):
 
 
 async def serve():
-    host = GLOBAL_CONFIG.get("feishu.http.host")
-    port = GLOBAL_CONFIG.get("feishu.http.port")
+    host = GLOBAL_CONFIG.get("feishu.http.host", '')
+    port = GLOBAL_CONFIG.get("feishu.http.port", 13331)
     address = host, port
     server = HTTPServer(address, FeishuRequestHandler)
     print("goodguy.feishu is running...")
