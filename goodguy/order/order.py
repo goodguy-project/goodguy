@@ -31,7 +31,6 @@ def order(text: str) -> Dict:
             "type": 'send',
             "text": 'reload config succeed',
         }
-    # codeforces
     elif op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             return {
