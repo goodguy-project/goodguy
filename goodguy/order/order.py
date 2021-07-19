@@ -1,6 +1,7 @@
 import logging
 from typing import Dict
 from goodguy.order.usage import USAGE
+from goodguy.service.crawl import get_recent_contest
 from goodguy.util.config import GLOBAL_CONFIG
 
 
@@ -23,7 +24,12 @@ def order(text: str) -> Dict:
             "type": 'send',
             "text": 'reload config succeed',
         }
-    # TODO 开发中
+    elif op in {'cf', 'codeforces'}:
+        if handle != '':
+            return {
+                "type": 'send',
+                "text": get_recent_contest('codeforces'),
+            }
     # 未知输入
     return {
         "type": "send",
