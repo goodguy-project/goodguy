@@ -27,5 +27,5 @@ def order(text: str) -> Dict:
     # 未知输入
     return {
         "type": "send",
-        "texts": f'命令 {text} 发生未知错误，用法：\n{USAGE}',
+        "text": f'命令 {text} 发生未知错误，用法：\n{USAGE}',
     }
