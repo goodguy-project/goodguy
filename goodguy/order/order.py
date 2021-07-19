@@ -13,7 +13,7 @@ def order(text: str) -> Dict:
     if op in {'菜单', 'menu', ''}:
         return {
             "type": 'send',
-            "msg": USAGE,
+            "text": USAGE,
         }
     # 重载配置文件（一般不使用）
     elif op == 'reload_config':
@@ -21,11 +21,11 @@ def order(text: str) -> Dict:
         logging.info('reload config succeed')
         return {
             "type": 'send',
-            "msg": 'reload config succeed',
+            "text": 'reload config succeed',
         }
     # TODO 开发中
     # 未知输入
     return {
         "type": "send",
-        "msg": f'命令 {text} 发生未知错误，用法：\n{USAGE}',
+        "texts": f'命令 {text} 发生未知错误，用法：\n{USAGE}',
     }

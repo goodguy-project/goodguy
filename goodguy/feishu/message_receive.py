@@ -2,6 +2,7 @@ import json
 import logging
 
 from goodguy.feishu.send_message import send_message
+from goodguy.order.order import order
 
 
 def message_receive(body):
@@ -17,6 +18,14 @@ def message_receive(body):
                 text = text.replace(mention["key"], "")
         except KeyError:
             pass
-        # TODO: 调用order进而send_message
+        result = order(text)
+        if result['type'] == 'send':
+            send_message({
+                "receive_id": chat_id,
+                "content": json.dumps({
+                    "text": result["text"],
+                }),
+                "msg_type": "text",
+            }, 'chat_id')
     except Exception as e:
         logging.exception(e)

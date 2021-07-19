@@ -22,3 +22,5 @@ email:
     server: ~
     port: ~
   limit: ~
+
+loglevel: 10
