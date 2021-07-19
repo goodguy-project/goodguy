@@ -5,6 +5,7 @@ import sys
 
 def build():
     root = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(root)
     pb_path = os.path.join(root, 'goodguy', 'pb')
     if not os.path.exists(pb_path):
         os.mkdir(pb_path)
@@ -18,7 +19,7 @@ def build():
                 "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                               "Chrome/91.0.4472.164 Safari/537.36",
             }).text)
-    os.system(f'{sys.executable} -m grpc_tools.protoc -I{pb_path} --python_out={pb_path} --grpc_python_out={pb_path} '
+    os.system(f'{sys.executable} -m grpc_tools.protoc -I{root} --python_out={root} --grpc_python_out={root} '
               f'{crawl_service_proto_path}')
 
 
