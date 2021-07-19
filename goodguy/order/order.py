@@ -1,13 +1,19 @@
 import logging
 from typing import Dict
 from goodguy.order.usage import USAGE
-from goodguy.service.crawl import get_recent_contest
+from goodguy.service.crawl import get_recent_contest, get_user_contest_record
 from goodguy.util.config import GLOBAL_CONFIG
 
 
 def order(text: str) -> Dict:
     text_split = text.split()
     op = '' if len(text_split) <= 0 else text_split[0]
+    op = {
+        "cf": "codeforces",
+        "atc": "atcoder",
+        "nc": "nowcoder",
+        "lc": "leetcode",
+    }.get(op, op)
     handle = '' if len(text_split) <= 1 else text_split[1]
     logging.debug(f"text: {text}\nop: {op}\nhandle: {handle}")
     op = op.lower()
@@ -26,13 +32,16 @@ def order(text: str) -> Dict:
             "text": 'reload config succeed',
         }
     # codeforces
-    elif op in {'cf', 'codeforces'}:
-        if handle != '':
-            pass
-        else:
+    elif op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
+        if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             return {
                 "type": 'send',
-                "text": str(get_recent_contest('codeforces')),
+                "text": str(get_user_contest_record(op, handle))
+            }
+        elif handle == '' and op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
+            return {
+                "type": 'send',
+                "text": str(get_recent_contest(op)),
             }
     # 未知输入
     return {
