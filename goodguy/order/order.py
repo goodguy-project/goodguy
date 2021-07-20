@@ -22,6 +22,7 @@ def order(text: str) -> Dict:
         return {
             "type": 'send',
             "text": USAGE,
+            "msg_type": "text",
         }
     # 重载配置文件（一般不使用）
     elif op == 'reload_config':
@@ -30,20 +31,24 @@ def order(text: str) -> Dict:
         return {
             "type": 'send',
             "text": 'reload config succeed',
+            "msg_type": "text",
         }
     elif op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             return {
                 "type": 'send',
-                "text": str(get_user_contest_record(op, handle))
+                "text": str(get_user_contest_record(op, handle)),
+                "msg_type": "text",
             }
         elif handle == '' and op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
             return {
                 "type": 'send',
                 "text": str(get_recent_contest(op)),
+                "msg_type": "text",
             }
     # 未知输入
     return {
         "type": "send",
         "text": f'命令 {text} 发生未知错误，用法：\n{USAGE}',
+        "msg_type": "text",
     }

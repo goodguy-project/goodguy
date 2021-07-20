@@ -23,10 +23,8 @@ def message_receive(body):
         if result['type'] == 'send':
             send_message({
                 "receive_id": chat_id,
-                "content": json.dumps({
-                    "text": result["text"],
-                }),
-                "msg_type": "text",
+                "content": json.dumps(result["content"]),
+                "msg_type": result["msg_type"],
             }, 'chat_id')
     except Exception as e:
         logging.exception(e)

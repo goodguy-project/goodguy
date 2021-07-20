@@ -2,8 +2,8 @@ import grpc
 from cachetools.func import ttl_cache
 from retrying import retry
 
-import goodguy.pb.crawl_service_pb2 as crawl_service_pb2
-import goodguy.pb.crawl_service_pb2_grpc as crawl_service_pb2_grpc
+from goodguy.pb import crawl_service_pb2
+from goodguy.pb import crawl_service_pb2_grpc
 from goodguy.util.catch_exception import catch_exception
 from goodguy.util.config import GLOBAL_CONFIG
 
