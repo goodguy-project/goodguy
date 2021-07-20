@@ -2,13 +2,14 @@ import asyncio
 import logging
 
 from goodguy.feishu.serve import serve as feishu_serve
+from goodguy.timer.timer import timer
 from goodguy.util.config import GLOBAL_CONFIG
 
 
-def main():
+async def main():
     logging.getLogger().setLevel(GLOBAL_CONFIG.get("loglevel"))
-    asyncio.run(feishu_serve())
+    await asyncio.gather(feishu_serve(), timer())
 
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())

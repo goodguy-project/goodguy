@@ -8,14 +8,15 @@ from goodguy.service.crawl import get_recent_contest
 
 def recent_contest_parser(platform: str, contest: crawl_service_pb2.RecentContest) -> str:
     return f'{platform} recent contest:\n' + '\n'.join(
-        f'name: {c.name}\nurl: {c.url}\ntime: {timestamp_to_date_string(c.timestamp)}' for c in contest.recent_contest)
+        f'name: {c.name}\nurl: {c.url}\ntime: {timestamp_to_date_string(c.timestamp)}' for c in
+        contest.recent_contest[::-1])
 
 
 def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentContest) -> Dict:
     element = []
     colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
               'indigo')
-    for c in contest.recent_contest:
+    for c in contest.recent_contest[::-1]:
         element.append({
             "tag": "div",
             "text": {
