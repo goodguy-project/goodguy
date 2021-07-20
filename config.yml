@@ -24,3 +24,7 @@ email:
   limit: ~
 
 loglevel: 10
+
+timer:
+  interval: ~
+

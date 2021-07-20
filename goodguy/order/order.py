@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Dict
 
@@ -6,6 +7,7 @@ from goodguy.order.usage import USAGE
 from goodguy.order.user_contest_record_parser import user_contest_record_parser
 from goodguy.service.crawl import get_recent_contest, get_user_contest_record
 from goodguy.util.config import GLOBAL_CONFIG
+from goodguy.util.platform_all import PLATFORM_ALL
 
 
 def order(text: str) -> Dict:
@@ -40,20 +42,20 @@ def order(text: str) -> Dict:
             },
             "msg_type": "text",
         }
-    elif op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
+    elif op in PLATFORM_ALL:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             return {
                 "type": 'send',
                 "content": {
-                    "text": user_contest_record_parser(handle, op, get_user_contest_record(op)),
+                    "text": user_contest_record_parser(handle, op, asyncio.run(get_user_contest_record(op))),
                 },
                 "msg_type": "text",
             }
-        elif handle == '' and op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
+        elif handle == '' and op in PLATFORM_ALL:
             return {
                 "type": 'send',
                 "content": {
-                    "text": recent_contest_parser(op, get_recent_contest(op)),
+                    "text": recent_contest_parser(op, asyncio.run(get_recent_contest(op))),
                 },
                 "msg_type": "text",
             }
