@@ -1,7 +1,7 @@
 import json
 import logging
 
-from goodguy.feishu.send_message import send_message
+from goodguy.feishu.send_message import send_message, send_card_message
 from goodguy.order.order import order
 
 
@@ -19,12 +19,18 @@ def message_receive(body):
                 text = text.replace(mention["key"], "")
         except KeyError:
             pass
-        result = order(text)
-        if result['type'] == 'send':
+        result = order(text, 'feishu')
+        if result["type"] == 'send':
             send_message({
                 "receive_id": chat_id,
                 "content": json.dumps(result["content"]),
                 "msg_type": result["msg_type"],
             }, 'chat_id')
+        elif result["type"] == 'card':
+            send_card_message({
+                "chat_id": chat_id,
+                "msg_type": result["msg_type"],
+                "card": result["content"],
+            })
     except Exception as e:
         logging.exception(e)

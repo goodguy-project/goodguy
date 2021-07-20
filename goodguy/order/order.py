@@ -1,16 +1,15 @@
-import asyncio
 import logging
-from typing import Dict
+from typing import Dict, Optional
 
-from goodguy.order.recent_contest_parser import recent_contest_parser
+from goodguy.order.recent_contest_parser import recent_contest_parser, recent_contest_card_parser
 from goodguy.order.usage import USAGE
-from goodguy.order.user_contest_record_parser import user_contest_record_parser
+from goodguy.order.user_contest_record_parser import user_contest_record_parser, user_contest_record_card_parser
 from goodguy.service.crawl import get_recent_contest, get_user_contest_record
 from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.platform_all import PLATFORM_ALL
 
 
-def order(text: str) -> Dict:
+def order(text: str, sns: Optional[str] = None) -> Dict:
     text_split = text.split()
     op = '' if len(text_split) <= 0 else text_split[0]
     op = {
@@ -44,18 +43,32 @@ def order(text: str) -> Dict:
         }
     elif op in PLATFORM_ALL:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
+            data = get_user_contest_record(op, handle)
+            if sns == 'feishu':
+                return {
+                    "type": 'card',
+                    "content": user_contest_record_card_parser(handle, op, data),
+                    "msg_type": "interactive",
+                }
             return {
                 "type": 'send',
                 "content": {
-                    "text": user_contest_record_parser(handle, op, asyncio.run(get_user_contest_record(op))),
+                    "text": user_contest_record_parser(handle, op, data),
                 },
                 "msg_type": "text",
             }
         elif handle == '' and op in PLATFORM_ALL:
+            data = get_recent_contest(op)
+            if sns == 'feishu':
+                return {
+                    "type": 'card',
+                    "content": recent_contest_card_parser(op, data),
+                    "msg_type": "interactive",
+                }
             return {
                 "type": 'send',
                 "content": {
-                    "text": recent_contest_parser(op, asyncio.run(get_recent_contest(op))),
+                    "text": recent_contest_parser(op, data),
                 },
                 "msg_type": "text",
             }

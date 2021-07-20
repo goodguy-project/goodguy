@@ -7,7 +7,7 @@ from goodguy.util.platform_all import PLATFORM_ALL
 
 async def contest_job() -> None:
     async def contest_job_with_platform(platform: str) -> None:
-        task = await get_recent_contest(platform)
+        data = get_recent_contest(platform)
         # TODO add reminder
         # reminder with send checker
         # better with merger
