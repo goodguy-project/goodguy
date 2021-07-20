@@ -7,16 +7,19 @@ from goodguy.service.crawl import get_recent_contest
 
 
 def recent_contest_parser(platform: str, contest: crawl_service_pb2.RecentContest) -> str:
+    cts = list(contest.recent_contest)
+    cts.sort(key=lambda x: x.timestamp)
     return f'{platform} recent contest:\n' + '\n'.join(
-        f'name: {c.name}\nurl: {c.url}\ntime: {timestamp_to_date_string(c.timestamp)}' for c in
-        contest.recent_contest[::-1])
+        f'name: {c.name}\nurl: {c.url}\ntime: {timestamp_to_date_string(c.timestamp)}' for c in cts)
 
 
 def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentContest) -> Dict:
+    cts = list(contest.recent_contest)
+    cts.sort(key=lambda x: x.timestamp)
     element = []
     colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
               'indigo')
-    for c in contest.recent_contest[::-1]:
+    for c in cts:
         element.append({
             "tag": "div",
             "text": {
