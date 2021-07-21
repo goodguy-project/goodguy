@@ -1,0 +1,7 @@
+<html>
+<body>
+<p>大家好！此邮件是比赛提醒邮件，<a href="https://github.com/ConanYu/GoodGuy">自动发送</a>，请勿回复。</p>
+<p>以下比赛即将开始：</p>{% for contest in contests %}
+<p style="color: {{ contest.color }}">{{ contest.message }}</p>{% endfor %}
+</body>
+</html>

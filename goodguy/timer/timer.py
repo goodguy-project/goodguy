@@ -1,19 +1,7 @@
 import asyncio
 
-from goodguy.service.crawl import get_recent_contest
+from goodguy.timer.contest_job import contest_job
 from goodguy.util.config import GLOBAL_CONFIG
-from goodguy.util.platform_all import PLATFORM_ALL
-
-
-async def contest_job() -> None:
-    async def contest_job_with_platform(platform: str) -> None:
-        data = get_recent_contest(platform)
-        # TODO add reminder
-        # reminder with send checker
-        # better with merger
-
-    tasks = [contest_job_with_platform(pf) for pf in PLATFORM_ALL]
-    await asyncio.gather(*tasks)
 
 
 async def job() -> None:
@@ -22,5 +10,8 @@ async def job() -> None:
 
 async def timer():
     while True:
-        await job()
-        await asyncio.sleep(GLOBAL_CONFIG.get("timer.interval", 3600))
+        task = asyncio.create_task(job())
+        # 任务周期进行时间 默认45分钟
+        await asyncio.sleep(GLOBAL_CONFIG.get("timer.interval", 2700))
+        # 无论任务是否做完 都应该停掉
+        task.cancel()
