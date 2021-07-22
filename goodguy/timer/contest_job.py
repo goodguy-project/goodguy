@@ -1,12 +1,15 @@
 import asyncio
+import datetime
 import os
 import time
+from threading import Lock
 from typing import List
 
 from jinja2 import Template
 
 from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
+from goodguy.timer.scheduler import scheduler
 from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.platform_all import PLATFORM_ALL
 from goodguy.util.send_all_email import send_all_email
@@ -29,11 +32,16 @@ def get_contest_email(cts: List[crawl_service_pb2.RecentContest]) -> str:
     return template.render(contests)
 
 
+_last_send = 0
+_last_send_lock = Lock()
+
+
 # 定时任务
 def remind_email_sender() -> None:
     async def crawl_job(platform: str) -> crawl_service_pb2.RecentContest:
         return get_recent_contest(platform)
 
+    global _last_send, _last_send_lock
     tasks = [crawl_job(pf) for pf in PLATFORM_ALL]
     rsp = await asyncio.gather(tasks)
     cts = []
@@ -47,13 +55,24 @@ def remind_email_sender() -> None:
     # 校验
     # 如果下一场比赛开始时间是在接下来一个小时内 且之前一个小时内没有发送过此邮件 则进行邮件提醒
     now = time.time()
-    if now < cts[0].timestamp < now + 60 * 60 + 10:
+    ok = False
+    with _last_send_lock:
+        if _last_send + 60 * 60 - 10 < now:
+            ok = True
+            _last_send = now
+    if ok and now < cts[0].timestamp < now + 60 * 60 + 10:
         send_all_email('html', get_contest_email(cts))
 
 
 def send_contest_remind_email(ts: int) -> None:
     # 在时间戳ts时添加定时任务
-    pass
+    dt = datetime.datetime.fromtimestamp(ts)
+    scheduler().add_job(
+        remind_email_sender,
+        trigger='date',
+        args=(),
+        run_date=dt,
+    )
 
 
 async def contest_job() -> None:
