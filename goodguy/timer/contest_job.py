@@ -1,12 +1,15 @@
 import asyncio
 import datetime
 import os
+import random
 import time
 from threading import Lock
-from typing import List
+from typing import List, Dict
 
+from cachetools.func import ttl_cache
 from jinja2 import Template
 
+from goodguy.feishu.send_message import send_card_message
 from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
 from goodguy.timer.scheduler import scheduler
@@ -73,6 +76,23 @@ def send_contest_remind_email(ts: int) -> None:
         args=(),
         run_date=dt,
     )
+
+
+def gen_feishu_card_message() -> Dict:
+    return dict()
+
+
+def send_contest_feishu_message(contest: crawl_service_pb2.RecentContest.ContestMessage) -> None:
+    def is_sent_message(name: str):
+        @ttl_cache(ttl=18000)
+        def message_manager(_: str, key: int) -> int:
+            return key
+
+        rd = random.getrandbits(128)
+        return rd == message_manager(name, rd)
+
+    if is_sent_message(contest.name):
+        send_card_message(gen_feishu_card_message())
 
 
 async def contest_job() -> None:
