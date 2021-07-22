@@ -1,19 +1,15 @@
 import asyncio
 import datetime
 import os
-import random
 import time
 from threading import Lock
-from typing import List, Dict
+from typing import List
 
-from cachetools.func import ttl_cache
 from jinja2 import Template
 
-from goodguy.feishu.send_message import send_card_message
 from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
 from goodguy.timer.scheduler import scheduler
-from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.platform_all import PLATFORM_ALL
 from goodguy.util.send_all_email import send_all_email
 
@@ -76,35 +72,3 @@ def send_contest_remind_email(ts: int) -> None:
         args=(),
         run_date=dt,
     )
-
-
-def gen_feishu_card_message() -> Dict:
-    return dict()
-
-
-def send_contest_feishu_message(contest: crawl_service_pb2.RecentContest.ContestMessage) -> None:
-    def is_sent_message(name: str):
-        @ttl_cache(ttl=18000)
-        def message_manager(_: str, key: int) -> int:
-            return key
-
-        rd = random.getrandbits(128)
-        return rd == message_manager(name, rd)
-
-    if is_sent_message(contest.name):
-        send_card_message(gen_feishu_card_message())
-
-
-async def contest_job() -> None:
-    async def contest_job_with_platform(platform: str) -> None:
-        data = get_recent_contest(platform)
-        now = time.time()
-        for contest in data.recent_contest:
-            # 如果比赛在两个小时以内进行
-            if now < contest.timestamp < now + 2 * 60 * 60:
-                # 比赛前一小时发送邮件提醒
-                if GLOBAL_CONFIG.get(f"{platform}.email_remind", False):
-                    send_contest_remind_email(contest.timestamp - 60 * 60)
-
-    tasks = [contest_job_with_platform(pf) for pf in PLATFORM_ALL]
-    await asyncio.gather(*tasks)

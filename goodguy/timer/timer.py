@@ -1,6 +1,6 @@
 import asyncio
 
-from goodguy.timer.contest_job import contest_job
+from goodguy.timer.contest.contest_job import contest_job
 from goodguy.util.config import GLOBAL_CONFIG
 
 
