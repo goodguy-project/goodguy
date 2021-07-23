@@ -41,7 +41,7 @@ def message_receive(body):
                     "text": "remind ok",
                 }),
                 "msg_type": "text",
-            })
+            }, 'chat_id')
         elif result["type"] == 'forget':
             delete_feishu_chat_id(chat_id)
             send_message({
@@ -50,6 +50,6 @@ def message_receive(body):
                     "text": "forget ok",
                 }),
                 "msg_type": "text",
-            })
+            }, 'chat_id')
     except Exception as e:
         logging.exception(e)
