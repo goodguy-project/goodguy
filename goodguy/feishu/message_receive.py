@@ -35,7 +35,21 @@ def message_receive(body):
             })
         elif result["type"] == 'remind':
             insert_feishu_chat_id(chat_id)
+            send_message({
+                "receive_id": chat_id,
+                "content": json.dumps({
+                    "text": "remind ok",
+                }),
+                "msg_type": "text",
+            })
         elif result["type"] == 'forget':
             delete_feishu_chat_id(chat_id)
+            send_message({
+                "receive_id": chat_id,
+                "content": json.dumps({
+                    "text": "forget ok",
+                }),
+                "msg_type": "text",
+            })
     except Exception as e:
         logging.exception(e)

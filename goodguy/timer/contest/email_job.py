@@ -42,7 +42,7 @@ def remind_email_sender() -> None:
 
     global _last_send, _last_send_lock
     tasks = [crawl_job(pf) for pf in PLATFORM_ALL]
-    rsp = await asyncio.gather(tasks)
+    rsp = asyncio.gather(tasks)
     cts = []
     # 遍历所有比赛
     for rc in rsp:
