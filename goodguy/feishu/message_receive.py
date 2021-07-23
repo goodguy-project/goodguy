@@ -3,6 +3,7 @@ import logging
 
 from goodguy.feishu.send_message import send_message, send_card_message
 from goodguy.order.order import order
+from goodguy.timer.contest.data import insert_feishu_chat_id, delete_feishu_chat_id
 
 
 def message_receive(body):
@@ -32,5 +33,9 @@ def message_receive(body):
                 "msg_type": result["msg_type"],
                 "card": result["content"],
             })
+        elif result["type"] == 'remind':
+            insert_feishu_chat_id(chat_id)
+        elif result["type"] == 'forget':
+            delete_feishu_chat_id(chat_id)
     except Exception as e:
         logging.exception(e)

@@ -41,6 +41,14 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
             },
             "msg_type": "text",
         }
+    elif op == 'remind':
+        return {
+            "type": 'remind',
+        }
+    elif op == 'forget':
+        return {
+            "type": 'forget',
+        }
     elif op in PLATFORM_ALL:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             data = get_user_contest_record(op, handle)
