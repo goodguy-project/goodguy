@@ -1,5 +1,6 @@
 import datetime
 import random
+import time
 from threading import Lock
 from typing import Dict
 
@@ -59,7 +60,7 @@ def remind_message_sender(contest: crawl_service_pb2.RecentContest.ContestMessag
         for chat_id in select_all_feishu_chat_id():
             request = base.copy()
             request["chat_id"] = chat_id
-            send_card_message()
+            send_card_message(request)
 
 
 def send_contest_feishu_message(ts: int, contest: crawl_service_pb2.RecentContest.ContestMessage, platform: str) -> None:
@@ -71,3 +72,11 @@ def send_contest_feishu_message(ts: int, contest: crawl_service_pb2.RecentContes
         args=(contest, platform),
         run_date=dt,
     )
+
+
+if __name__ == '__main__':
+    remind_message_sender(crawl_service_pb2.RecentContest.ContestMessage(
+        name="name",
+        url="url",
+        timestamp=int(time.time()),
+    ), 'codeforces')

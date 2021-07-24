@@ -28,3 +28,4 @@ loglevel: 10
 timer:
   interval: ~
 
+all_feishu_remind: ~
