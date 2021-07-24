@@ -7,7 +7,7 @@ from goodguy.feishu.access_token import get_tenant_access_token
 
 
 # doc: https://open.feishu.cn/document/ukTMukTMukTM/ucDO1EjL3gTNx4yN4UTM
-@retry(stop_max_attempt_number=5, wait_fixed=20)
+@retry(stop_max_attempt_number=5, wait_fixed=20000)
 def send_message(request: Dict, receive_id_type: str) -> None:
     tenant_access_token = get_tenant_access_token()
     rsp = requests.post(
@@ -22,7 +22,7 @@ def send_message(request: Dict, receive_id_type: str) -> None:
 
 
 # doc: https://open.feishu.cn/document/ukTMukTMukTM/uYTNwUjL2UDM14iN1ATN
-@retry(stop_max_attempt_number=5, wait_fixed=20)
+@retry(stop_max_attempt_number=5, wait_fixed=20000)
 def send_card_message(request: Dict) -> None:
     tenant_access_token = get_tenant_access_token()
     rsp = requests.post(
