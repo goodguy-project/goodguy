@@ -30,6 +30,8 @@ class Config(object):
                     ret = ret[arg]
                 except:
                     return default
+            if ret is None:
+                return default
             return deepcopy(ret)
 
 

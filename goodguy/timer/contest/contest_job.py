@@ -26,3 +26,8 @@ async def contest_job() -> None:
 
     tasks = [contest_job_with_platform(pf) for pf in PLATFORM_ALL]
     await asyncio.gather(*tasks)
+
+
+if __name__ == '__main__':
+    logging.getLogger().setLevel(logging.DEBUG)
+    asyncio.run(contest_job())
