@@ -1,4 +1,5 @@
 import asyncio
+import logging
 import time
 
 from goodguy.service.crawl import get_recent_contest
@@ -20,6 +21,7 @@ async def contest_job() -> None:
                     send_contest_remind_email(contest.timestamp - 60 * 60)
                 # 比赛前一个小时发送飞书提醒
                 if GBC.get(f"{platform}.feishu_remind", False) or GBC.get(f"all_feishu_remind", False):
+                    logging.debug(data)
                     send_contest_feishu_message(contest.timestamp - 60 * 60, contest, platform)
 
     tasks = [contest_job_with_platform(pf) for pf in PLATFORM_ALL]
