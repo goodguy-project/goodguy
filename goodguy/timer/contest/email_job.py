@@ -37,12 +37,15 @@ _last_send_lock = Lock()
 
 # 定时任务
 def remind_email_sender() -> None:
-    async def crawl_job(platform: str) -> crawl_service_pb2.RecentContest:
-        return get_recent_contest(platform)
+    async def crawl_jobs():
+        async def crawl_job(platform: str) -> crawl_service_pb2.RecentContest:
+            return get_recent_contest(platform)
+
+        tasks = [crawl_job(pf) for pf in PLATFORM_ALL]
+        return await asyncio.gather(*tasks)
 
     global _last_send, _last_send_lock
-    tasks = [crawl_job(pf) for pf in PLATFORM_ALL]
-    rsp = asyncio.gather(tasks)
+    rsp = asyncio.run(crawl_jobs())
     cts = []
     # 遍历所有比赛
     for rc in rsp:
