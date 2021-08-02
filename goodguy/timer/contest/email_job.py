@@ -28,7 +28,12 @@ def get_contest_email(cts: List[crawl_service_pb2.RecentContest]) -> Tuple[str, 
                 "color": "red",
                 "message": "Message TODO",
             })
-    return f'最近比赛提醒（{len(contests)}条）', template.render(contests)
+    return (
+        f'最近比赛提醒（{len(contests)}条）',
+        template.render({
+            "contests": contests,
+        })
+    )
 
 
 _last_send = 0
