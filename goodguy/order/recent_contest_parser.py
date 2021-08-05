@@ -1,7 +1,7 @@
 import random
 from typing import Dict
 
-from goodguy.order.timestamp_to_date_string import timestamp_to_date_string
+from goodguy.util.timestamp_to_date_string import timestamp_to_date_string
 from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
 

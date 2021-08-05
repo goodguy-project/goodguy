@@ -7,7 +7,7 @@ from typing import Dict
 from cachetools import TTLCache
 
 from goodguy.feishu.send_message import send_card_message
-from goodguy.order.timestamp_to_date_string import timestamp_to_date_string
+from goodguy.util.timestamp_to_date_string import timestamp_to_date_string
 from goodguy.pb import crawl_service_pb2
 from goodguy.timer.contest.data import select_all_feishu_chat_id
 from goodguy.timer.scheduler import scheduler
