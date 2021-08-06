@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import time
 
@@ -6,11 +5,13 @@ from goodguy.service.crawl import get_recent_contest
 from goodguy.timer.contest.email_job import send_contest_remind_email
 from goodguy.timer.contest.feishu_job import send_contest_feishu_message
 from goodguy.util.config import GLOBAL_CONFIG as GBC
+from goodguy.util.go import go
 from goodguy.util.platform_all import PLATFORM_ALL
 
 
-async def contest_job() -> None:
-    async def contest_job_with_platform(platform: str) -> None:
+def contest_job() -> None:
+    @go(daemon=True)
+    def contest_job_with_platform(platform: str):
         data = get_recent_contest(platform)
         now = time.time()
         for contest in data.recent_contest:
@@ -25,9 +26,10 @@ async def contest_job() -> None:
                     send_contest_feishu_message(contest.timestamp - 60 * 60, contest, platform)
 
     tasks = [contest_job_with_platform(pf) for pf in PLATFORM_ALL]
-    await asyncio.gather(*tasks)
+    for task in tasks:
+        task.get()
 
 
 if __name__ == '__main__':
     logging.getLogger().setLevel(logging.DEBUG)
-    asyncio.run(contest_job())
+    contest_job()
