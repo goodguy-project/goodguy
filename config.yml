@@ -1,10 +1,15 @@
 app:
   id: ~
   secret: ~
-  verification:
-    token: ~
+  token: ~
 
-http:
+feishu:
+  http:
+    host: ~
+    port: ~
+
+crawl_service:
+  host: ~
   port: ~
 
 email:
@@ -17,3 +22,10 @@ email:
     server: ~
     port: ~
   limit: ~
+
+loglevel: 10
+
+timer:
+  interval: ~
+
+all_feishu_remind: ~

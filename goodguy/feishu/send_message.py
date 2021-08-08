@@ -1,47 +1,36 @@
-import requests, json
-import goodguy.util.config as config
-from goodguy.util.cache import AutoCache
+import json
+import logging
+from typing import Dict
+import requests
+from retrying import retry
+from goodguy.feishu.access_token import get_tenant_access_token
 
 
-def GetTenantAccessToken():
-  url = "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/"
-  headers = {
-    "Content-Type": "application/json"
-  }
-  req_body = {
-    "app_id": config.GetConfig("app", "id"),
-    "app_secret": config.GetConfig("app", "secret")
-  }
-  data = bytes(json.dumps(req_body), encoding='utf8')
-  try:
-    req = requests.post(url=url, data=data, headers=headers)
-    req = json.loads(req.text)
-    return req.get('tenant_access_token', '')
-  except Exception as e:
-    print(e)
-    return ''
+# doc: https://open.feishu.cn/document/ukTMukTMukTM/ucDO1EjL3gTNx4yN4UTM
+@retry(stop_max_attempt_number=5, wait_fixed=20000)
+def send_message(request: Dict, receive_id_type: str) -> None:
+    tenant_access_token = get_tenant_access_token()
+    rsp = requests.post(
+        f"https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type={receive_id_type}",
+        data=json.dumps(request),
+        headers={
+            "Authorization": f"Bearer {tenant_access_token}",
+            "Content-Type": "application/json; charset=utf-8",
+        }
+    )
+    logging.debug(rsp.text)
 
 
-# token过期时间设置为28分钟
-token_cache = AutoCache(GetTenantAccessToken, 1680)
-
-
-def SendMessage(message_type, send_id, text=''):
-  url = "https://open.feishu.cn/open-apis/message/v4/send/"
-  headers = {
-    "Content-Type": "application/json",
-    "Authorization": "Bearer " + token_cache.Get()
-  }
-  req_body = {
-    message_type: send_id,
-    "msg_type": "text",
-    "content": {
-      "text": text
-    }
-  }
-  try:
-    data = bytes(json.dumps(req_body), encoding='utf-8')
-    req = requests.post(url=url, data=data, headers=headers)
-    print(req.text)
-  except Exception as e:
-    print(e)
+# doc: https://open.feishu.cn/document/ukTMukTMukTM/uYTNwUjL2UDM14iN1ATN
+@retry(stop_max_attempt_number=5, wait_fixed=20000)
+def send_card_message(request: Dict) -> None:
+    tenant_access_token = get_tenant_access_token()
+    rsp = requests.post(
+        f"https://open.feishu.cn/open-apis/message/v4/send/",
+        data=json.dumps(request),
+        headers={
+            "Authorization": f"Bearer {tenant_access_token}",
+            "Content-Type": "application/json; charset=utf-8",
+        }
+    )
+    logging.debug(rsp.text)
