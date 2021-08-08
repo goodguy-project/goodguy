@@ -29,21 +29,21 @@ Session = sessionmaker(bind=_engine)
 
 
 def insert_feishu_chat_id(chat_id: str):
-    session = Session()
-    feishu = FeishuNotice(chat_id=chat_id)
-    session.add(feishu)
-    session.commit()
+    with Session() as session:
+        feishu = FeishuNotice(chat_id=chat_id)
+        session.add(feishu)
+        session.commit()
 
 
 def select_all_feishu_chat_id() -> Set[str]:
-    session = Session()
-    return set(e.chat_id for e in session.query(FeishuNotice).all())
+    with Session() as session:
+        return set(e.chat_id for e in session.query(FeishuNotice).all())
 
 
 def delete_feishu_chat_id(chat_id: str):
-    session = Session()
-    session.query(FeishuNotice).filter(FeishuNotice.chat_id == chat_id).delete(synchronize_session=False)
-    session.commit()
+    with Session() as session:
+        session.query(FeishuNotice).filter(FeishuNotice.chat_id == chat_id).delete(synchronize_session=False)
+        session.commit()
 
 
 if __name__ == '__main__':
