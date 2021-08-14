@@ -13,8 +13,8 @@
 |AtCoder|查询用户|atc {AtCoder ID}|
 |AtCoder|查询最近比赛|atc|
 |LeetCode|查询最近比赛|lc|
-|\|给该群添加提醒|remind|
-|\|取消提醒|forget|
+| |给该群添加提醒|remind|
+| |取消提醒|forget|
 
 ### 邮件提醒机器人
 
