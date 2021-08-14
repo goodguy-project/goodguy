@@ -21,7 +21,7 @@ def contest_job() -> None:
             if now < contest.timestamp < now + 2 * 60 * 60:
                 logger.debug(data)
                 # 比赛前一小时发送邮件提醒
-                if GBC.get(f"{platform}.email_remind", False):
+                if GBC.get(f"{platform}.email_remind", False) or GBC.get("all_email_remind", False):
                     send_contest_remind_email(contest.timestamp - 60 * 60)
                 # 比赛前一个小时发送飞书提醒
                 if GBC.get(f"{platform}.feishu_remind", False) or GBC.get(f"all_feishu_remind", False):

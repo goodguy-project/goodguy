@@ -20,7 +20,7 @@ class FeishuRequestHandler(BaseHTTPRequestHandler):
                 token = body["header"]["token"]
             except KeyError:
                 token = body["token"]
-            if token != GLOBAL_CONFIG.get("app.token"):
+            if token != GLOBAL_CONFIG.get("feishu.app.token"):
                 self.__response("", http.HTTPStatus.BAD_REQUEST)
                 return
             # 验证请求 URL是否有效

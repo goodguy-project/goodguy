@@ -10,8 +10,8 @@ from retrying import retry
 @retry(stop_max_attempt_number=5, wait_fixed=20000)
 @ttl_cache(ttl=1200)
 def get_tenant_access_token():
-    app_id = GLOBAL_CONFIG.get("app.id")
-    app_secret = GLOBAL_CONFIG.get("app.secret")
+    app_id = GLOBAL_CONFIG.get("feishu.app.id")
+    app_secret = GLOBAL_CONFIG.get("feishu.app.secret")
     text = requests.post(
         "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal/",
         data=json.dumps({
