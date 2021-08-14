@@ -81,22 +81,23 @@ def remind_email_sender() -> None:
 
     global _last_send, _last_send_lock
     rsp = asyncio.run(crawl_jobs())
+    ok = False
     cts = []
+    now = time.time()
     # 遍历所有比赛
     for pf, rc in rsp:
         for c in rc.recent_contest:
-            # 结束时间大于当前时间
+            # 结束时间大于当前时间才可以被写进邮件中
             if c.timestamp + c.duration >= time.time():
                 cts.append((pf, c))
-    if len(cts) == 0:
+                # 有一场比赛是在接下来一个小时内开始才写进邮件中
+                if now <= c.timestamp <= now + 60 * 60 + 10:
+                    ok = True
+    if len(cts) == 0 or not ok:
         return
     cts.sort(key=lambda x: x[1].timestamp)
-    # 校验
-    # 如果下一场比赛开始时间是在接下来一个小时内 且之前十二个小时内没有发送过此邮件 则进行邮件提醒
-    now = time.time()
-    if not now < cts[0][1].timestamp < now + 60 * 60 + 10:
-        return
     ok = False
+    # 12小时内没有发送过邮件才可再发一次邮件
     with _last_send_lock:
         if _last_send + 60 * 60 * 12 - 10 < now:
             ok = True
