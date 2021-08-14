@@ -41,6 +41,7 @@
 ### 配置PYTHONPATH
 
 Windows: 在项目根目录下执行`set PYTHONPATH=.`
+
 Mac Linux: 在项目根目录下执行`export PYTHONPATH=.`
 
 ### 配置文件
