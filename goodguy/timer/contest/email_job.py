@@ -63,7 +63,7 @@ def get_contest_email(cts: List[Tuple[str, crawl_service_pb2.RecentContest]]) ->
         "not_urgent": not_urgent,
     })
     html = get_html_from_mjml(mjml)
-    return f'最近比赛提醒（{len(cts)}条）', html
+    return f'GoodGuy - 最近比赛提醒（{len(cts)}条）', html
 
 
 _last_send = 0
@@ -85,7 +85,9 @@ def remind_email_sender() -> None:
     # 遍历所有比赛
     for pf, rc in rsp:
         for c in rc.recent_contest:
-            cts.append((pf, c))
+            # 结束时间大于当前时间
+            if c.timestamp + c.duration >= time.time():
+                cts.append((pf, c))
     if len(cts) == 0:
         return
     cts.sort(key=lambda x: x[1].timestamp)
