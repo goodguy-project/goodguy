@@ -24,7 +24,7 @@
 
 ### CrawlService
 
-爬虫基于项目 [CrawlService](https://github.com/ConanYu/CrawlService) ，需要先运行 [CrawlService](https://github.com/ConanYu/CrawlService) 再运行本项目。
+本项目需要基于强大的gRPC框架，以及项目 [CrawlService](https://github.com/ConanYu/CrawlService) 作为爬虫支持。请先运行 [CrawlService](https://github.com/ConanYu/CrawlService) 再运行本项目，本项目才能运行起来。
 
 ### 安装Python3
 
@@ -33,6 +33,10 @@
 ### 安装Python依赖
 
 `pip install -r requirements.txt`
+
+### 建立gRPC依赖
+
+`python build.py`
 
 ### 配置PYTHONPATH
 
