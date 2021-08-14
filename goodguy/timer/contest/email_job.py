@@ -90,13 +90,13 @@ def remind_email_sender() -> None:
         return
     cts.sort(key=lambda x: x[1].timestamp)
     # 校验
-    # 如果下一场比赛开始时间是在接下来一个小时内 且之前一个小时内没有发送过此邮件 则进行邮件提醒
+    # 如果下一场比赛开始时间是在接下来一个小时内 且之前十二个小时内没有发送过此邮件 则进行邮件提醒
     now = time.time()
     if not now < cts[0][1].timestamp < now + 60 * 60 + 10:
         return
     ok = False
     with _last_send_lock:
-        if _last_send + 60 * 60 - 10 < now:
+        if _last_send + 60 * 60 * 12 - 10 < now:
             ok = True
             _last_send = now
     if ok:
