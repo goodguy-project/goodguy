@@ -20,11 +20,13 @@ def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentC
     colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
               'indigo')
     for c in cts:
+        end_ts = c.timestamp + c.duration
         element.append({
             "tag": "div",
             "text": {
                 "tag": "lark_md",
-                "content": f"{timestamp_to_date_string(c.timestamp)} [{c.name}]({c.url})",
+                "content": f"{timestamp_to_date_string(c.timestamp)} - {timestamp_to_date_string(end_ts)}\n"
+                           f"[{c.name}]({c.url})",
             }
         })
         element.append({
