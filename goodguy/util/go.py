@@ -25,11 +25,15 @@ class _Promise(object):
         return self.__thread.res
 
 
-def go(daemon: bool = False):
+def go(daemon: bool = True):
     def decorator(func: Callable):
         def wrapper(*args, **kwargs) -> _Promise:
             return _Promise(_Thread(func, daemon, args, kwargs))
 
         return wrapper
 
+    if callable(daemon):
+        f = deamon
+        deamon = True
+        return decorator(f)
     return decorator
