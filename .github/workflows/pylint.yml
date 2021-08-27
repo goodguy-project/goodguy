@@ -19,6 +19,7 @@ jobs:
         pip install pylint
         pip install -r requirements.txt
     - name: Analysing the code with pylint
+      env:
+        PYTHONPATH: .
       run: |
-        export PYTHONPATH=.
-        pylint `ls -R|grep .py$|xargs` --max-line-length=120
+        python .github/workflows/lint.py
