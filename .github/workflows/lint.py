@@ -1,4 +1,5 @@
 import os
+import sys
 
 
 def lint():
@@ -8,12 +9,12 @@ def lint():
             if file.split('.')[-1] == 'py':
                 args = (
                     '--max-line-length=120',
-                    '--disable=C0114,C0115,C0116,R1722',
+                    '--disable=C0114,C0115,C0116',
                     '--variable-rgx=[a-z_][a-z0-9_]*$',
                 )
-                c = os.system(f'pylint {os.path.join(path, file)} ' + ' '.join(args))
+                c = os.system(f'pylint {os.path.join(path, "build.py")} ' + ' '.join(args))
                 if c != 0:
-                    exit(c)
+                    sys.exit(1)
 
 
 if __name__ == '__main__':
