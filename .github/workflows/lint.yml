@@ -1,12 +1,10 @@
-name: Pylint
+name: lint
 
 on: [push]
 
 jobs:
-  unit-test:
-
+  pylint:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.9
@@ -22,4 +20,4 @@ jobs:
         PYTHONPATH: .
       run: |
         python .github/workflows/lint.py
-        echo "Exited with '$?'"
+        echo "lint.py exited with '$?'"
