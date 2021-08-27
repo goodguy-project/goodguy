@@ -9,10 +9,12 @@ def lint():
             if file.split('.')[-1] == 'py':
                 args = (
                     '--max-line-length=120',
-                    '--disable=C0114,C0115,C0116',
+                    '--disable=C0114,C0115,C0116,W,R0903,E0611,E0401,R0205,R0913',
                     '--variable-rgx=[a-z_][a-z0-9_]*$',
+                    '--argument-rgx=[a-z_][a-z0-9_]*$',
                 )
-                c = os.system(f'pylint {os.path.join(path, "build.py")} ' + ' '.join(args))
+                print('file:', os.path.join(path, file))
+                c = os.system(f'pylint {os.path.join(path, file)} ' + ' '.join(args))
                 if c != 0:
                     sys.exit(1)
 

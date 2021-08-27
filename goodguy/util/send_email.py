@@ -8,7 +8,7 @@ from goodguy.util.config import GLOBAL_CONFIG
 def split_to_addr(to_addr: List[str], max_send: int = 10) -> List[List[str]]:
     ret: List[List[str]] = []
     for to in to_addr:
-        if not len(ret) or len(ret[-1]) >= max_send:
+        if not ret or len(ret[-1]) >= max_send:
             ret.append([])
         ret[-1].append(to)
     return ret

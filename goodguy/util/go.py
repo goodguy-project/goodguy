@@ -1,5 +1,5 @@
 import threading
-from typing import Callable
+from typing import Callable, Union
 
 
 class _Thread(threading.Thread):
@@ -25,7 +25,7 @@ class _Promise(object):
         return self.__thread.res
 
 
-def go(daemon: bool = True):
+def go(daemon: Union[bool, Callable] = True):  # pylint: disable=invalid-name
     def decorator(func: Callable):
         def wrapper(*args, **kwargs) -> _Promise:
             return _Promise(_Thread(func, daemon, args, kwargs))
@@ -33,7 +33,7 @@ def go(daemon: bool = True):
         return wrapper
 
     if callable(daemon):
-        f = deamon
-        deamon = True
+        f = daemon
+        daemon = True
         return decorator(f)
     return decorator

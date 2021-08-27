@@ -8,7 +8,7 @@ from goodguy.timer.contest.email_job import send_contest_remind_email
 from goodguy.timer.contest.feishu_job import send_contest_feishu_message
 from goodguy.util.config import GLOBAL_CONFIG as GBC
 from goodguy.util.go import go
-from goodguy.util.platform_all import PLATFORM_ALL
+from goodguy.util.const import PLATFORM_ALL
 
 
 def contest_job() -> None:

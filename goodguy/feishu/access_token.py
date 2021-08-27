@@ -3,8 +3,9 @@ import logging
 
 import requests
 from cachetools.func import ttl_cache
-from goodguy.util.config import GLOBAL_CONFIG
 from retrying import retry
+
+from goodguy.util.config import GLOBAL_CONFIG
 
 
 @retry(stop_max_attempt_number=5, wait_fixed=20000)

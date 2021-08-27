@@ -2,13 +2,14 @@ import logging
 from typing import Dict, Optional
 
 from goodguy.order.recent_contest_parser import recent_contest_parser, recent_contest_card_parser
-from goodguy.order.usage import USAGE
+from goodguy.util.const import USAGE
 from goodguy.order.user_contest_record_parser import user_contest_record_parser, user_contest_record_card_parser
 from goodguy.service.crawl import get_recent_contest, get_user_contest_record
 from goodguy.util.config import GLOBAL_CONFIG
-from goodguy.util.platform_all import PLATFORM_ALL
+from goodguy.util.const import PLATFORM_ALL
 
 
+# pylint: disable=too-many-return-statements
 def order(text: str, sns: Optional[str] = None) -> Dict:
     text_split = text.split()
     op = '' if len(text_split) <= 0 else text_split[0]
@@ -31,7 +32,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
             "msg_type": "text",
         }
     # 重载配置文件（一般不使用）
-    elif op == 'reload_config':
+    if op == 'reload_config':
         GLOBAL_CONFIG.reload_config()
         logging.info('reload config succeed')
         return {
@@ -41,15 +42,15 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
             },
             "msg_type": "text",
         }
-    elif op == 'remind':
+    if op == 'remind':
         return {
             "type": 'remind',
         }
-    elif op == 'forget':
+    if op == 'forget':
         return {
             "type": 'forget',
         }
-    elif op in PLATFORM_ALL:
+    if op in PLATFORM_ALL:
         if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             data = get_user_contest_record(op, handle)
             if sns == 'feishu':
@@ -65,7 +66,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
                 },
                 "msg_type": "text",
             }
-        elif handle == '' and op in PLATFORM_ALL:
+        if handle == '' and op in PLATFORM_ALL:
             data = get_recent_contest(op)
             if sns == 'feishu':
                 return {

@@ -1,6 +1,7 @@
 import os
-import requests
 import sys
+
+import requests
 
 
 def build():

@@ -1,6 +1,7 @@
 import random
 from typing import Dict
 
+from goodguy.util.const import COLORS
 from goodguy.util.timestamp_to_date_string import timestamp_to_date_string
 from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
@@ -17,8 +18,6 @@ def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentC
     cts = list(contest.recent_contest)
     cts.sort(key=lambda x: x.timestamp)
     element = []
-    colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
-              'indigo')
     for c in cts:
         end_ts = c.timestamp + c.duration
         element.append({
@@ -32,7 +31,7 @@ def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentC
         element.append({
             "tag": "hr",
         })
-    if len(element):
+    if element:
         element.pop()
     return {
         "config": {
@@ -43,7 +42,7 @@ def recent_contest_card_parser(platform: str, contest: crawl_service_pb2.RecentC
                 "tag": "plain_text",
                 "content": f"{platform} 比赛",
             },
-            "template": random.choice(colors),
+            "template": random.choice(COLORS),
         },
         "elements": element,
     }

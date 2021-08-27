@@ -7,6 +7,7 @@ from typing import Dict
 from cachetools import TTLCache
 
 from goodguy.feishu.send_message import send_card_message
+from goodguy.util.const import COLORS
 from goodguy.util.timestamp_to_date_string import timestamp_to_date_string
 from goodguy.pb import crawl_service_pb2
 from goodguy.timer.contest.data import select_all_feishu_chat_id
@@ -14,8 +15,6 @@ from goodguy.timer.scheduler import scheduler
 
 
 def _gen_feishu_card_message(c: crawl_service_pb2.RecentContest.ContestMessage, pf: str) -> Dict:
-    colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
-              'indigo')
     element = [{
         "tag": "div",
         "text": {
@@ -34,22 +33,22 @@ def _gen_feishu_card_message(c: crawl_service_pb2.RecentContest.ContestMessage, 
                     "tag": "plain_text",
                     "content": f"{pf}比赛提醒",
                 },
-                "template": random.choice(colors),
+                "template": random.choice(COLORS),
             },
             "elements": element,
         },
     }
 
 
-_contest_cache = TTLCache(maxsize=1024, ttl=5 * 60 * 60)
-_contest_cache_lock = Lock()
+_CONTEST_CACHE = TTLCache(maxsize=1024, ttl=5 * 60 * 60)
+_CONTEST_CACHE_LOCK = Lock()
 
 
 def _is_not_sent_message(name: str) -> bool:
-    global _contest_cache, _contest_cache_lock
-    with _contest_cache_lock:
-        if _contest_cache.get(name) is None:
-            _contest_cache[name] = 1
+    global _CONTEST_CACHE, _CONTEST_CACHE_LOCK
+    with _CONTEST_CACHE_LOCK:
+        if _CONTEST_CACHE.get(name) is None:
+            _CONTEST_CACHE[name] = 1
             return True
     return False
 
@@ -63,7 +62,8 @@ def remind_message_sender(contest: crawl_service_pb2.RecentContest.ContestMessag
             send_card_message(request)
 
 
-def send_contest_feishu_message(ts: int, contest: crawl_service_pb2.RecentContest.ContestMessage, platform: str) -> None:
+def send_contest_feishu_message(ts: int, contest: crawl_service_pb2.RecentContest.ContestMessage,
+                                platform: str) -> None:
     # 在时间戳ts时添加定时任务
     dt = datetime.datetime.fromtimestamp(ts)
     scheduler().add_job(

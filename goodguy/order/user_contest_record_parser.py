@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 from goodguy.feishu.upload_image import upload_image
 from goodguy.pb import crawl_service_pb2
-from goodguy.util.const import ROOT
+from goodguy.util.const import ROOT, COLORS
 
 
 def user_contest_record_parser(handle: str, platform: str,
@@ -22,12 +22,12 @@ def user_contest_record_parser(handle: str, platform: str,
     )])
 
 
-_plt_lock = Lock()
+_PLT_LOCK = Lock()
 
 
 def get_user_contest_record_graph(user_contest_record: crawl_service_pb2.UserContestRecord) -> str:
     # 返回文件路径
-    global _plt_lock
+    global _PLT_LOCK
     x, y = [], []
     for record in user_contest_record.record:
         x.append(datetime.datetime.fromtimestamp(record.timestamp))
@@ -36,7 +36,7 @@ def get_user_contest_record_graph(user_contest_record: crawl_service_pb2.UserCon
     if not os.path.exists(path):
         os.mkdir(path)
     file = os.path.join(path, f'{int(time.time())}_{random.randint(0, 998244353)}.png')
-    with _plt_lock:
+    with _PLT_LOCK:
         plt.cla()
         plt.plot(x, y, 'go-')
         plt.xlabel('time')
@@ -47,8 +47,6 @@ def get_user_contest_record_graph(user_contest_record: crawl_service_pb2.UserCon
 
 def user_contest_record_card_parser(handle: str, platform: str,
                                     user_contest_record: crawl_service_pb2.UserContestRecord) -> Dict:
-    colors = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple',
-              'indigo')
     graph_path = get_user_contest_record_graph(user_contest_record)
     img_key = upload_image(graph_path)
     data = (
@@ -75,7 +73,7 @@ def user_contest_record_card_parser(handle: str, platform: str,
                 "tag": "plain_text",
                 "content": f"{handle} {platform} 比赛记录",
             },
-            "template": random.choice(colors),
+            "template": random.choice(COLORS),
         },
         "elements": element + [
             {

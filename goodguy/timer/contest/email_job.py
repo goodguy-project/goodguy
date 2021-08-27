@@ -12,7 +12,7 @@ from goodguy.pb import crawl_service_pb2
 from goodguy.service.crawl import get_recent_contest
 from goodguy.timer.scheduler import scheduler
 from goodguy.util.get_html_from_mjml import get_html_from_mjml
-from goodguy.util.platform_all import PLATFORM_ALL
+from goodguy.util.const import PLATFORM_ALL
 from goodguy.util.send_email import send_all_email
 from goodguy.util.timestamp_to_date_string import timestamp_to_date_string, duration_to_string
 
@@ -66,8 +66,8 @@ def get_contest_email(cts: List[Tuple[str, crawl_service_pb2.RecentContest]]) ->
     return f'GoodGuy - 最近比赛提醒（{len(cts)}条）', html
 
 
-_last_send = 0
-_last_send_lock = Lock()
+_LAST_SEND = 0
+_LAST_SEND_LOCK = Lock()
 
 
 # 定时任务
@@ -79,7 +79,7 @@ def remind_email_sender() -> None:
         tasks = [crawl_job(pf) for pf in PLATFORM_ALL]
         return await asyncio.gather(*tasks)
 
-    global _last_send, _last_send_lock
+    global _LAST_SEND, _LAST_SEND_LOCK
     rsp = asyncio.run(crawl_jobs())
     ok = False
     cts = []
@@ -98,10 +98,10 @@ def remind_email_sender() -> None:
     cts.sort(key=lambda x: x[1].timestamp)
     ok = False
     # 12小时内没有发送过邮件才可再发一次邮件
-    with _last_send_lock:
-        if _last_send + 60 * 60 * 12 - 10 < now:
+    with _LAST_SEND_LOCK:
+        if _LAST_SEND + 60 * 60 * 12 - 10 < now:
             ok = True
-            _last_send = now
+            _LAST_SEND = now
     if ok:
         title, text = get_contest_email(cts)
         logger.debug(text)
