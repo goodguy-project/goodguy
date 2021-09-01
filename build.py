@@ -15,7 +15,7 @@ def build():
         pb_file.write(requests.get(
             # 使用镜像
             "https://mirror.ghproxy.com/"
-            "https://raw.githubusercontent.com/ConanYu/CrawlService/main/crawl_service/crawl_service.proto",
+            "https://raw.githubusercontent.com/goodguy-project/goodguy-crawl/main/crawl_service/crawl_service.proto",
             headers={
                 "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
                               "Chrome/91.0.4472.164 Safari/537.36",
