@@ -1,5 +1,6 @@
 import functools
 import os
+from inspect import isroutine
 from threading import Semaphore
 from typing import Union, Callable, Optional
 from concurrent.futures import ThreadPoolExecutor
@@ -31,12 +32,12 @@ def _decorator_class(cls: type, max_worker: Optional[int] = None) -> type:
 
     class _PoolDecoratorClass(cls):
         def __init__(self, *args, **kwargs):
-            super(_PoolDecoratorClass, self).__init__(*args, **kwargs)
+            super().__init__(*args, **kwargs)
             self.__semaphore = Semaphore(max_worker)
 
         def __getattribute__(self, item):
-            what = super(_PoolDecoratorClass, self).__getattribute__(item)
-            if callable(what):
+            what = super().__getattribute__(item)
+            if isroutine(what):
                 self.__semaphore.acquire()
                 return _SemaphoreRelease(what, self.__semaphore)
             return what
