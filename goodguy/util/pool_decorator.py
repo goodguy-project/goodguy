@@ -38,7 +38,7 @@ def _decorator_class(cls: type, max_worker: Optional[int] = None) -> type:
         def __getattribute__(self, item):
             what = super().__getattribute__(item)
             if isroutine(what):
-                self.__semaphore.acquire()
+                self.__semaphore.acquire()  # pylint: disable=consider-using-with
                 return _SemaphoreRelease(what, self.__semaphore)
             return what
 
