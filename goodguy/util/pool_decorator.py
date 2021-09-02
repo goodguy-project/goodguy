@@ -29,29 +29,19 @@ def _decorator_class(cls: type, max_worker: Optional[int] = None) -> type:
         def __del__(self):
             self.semaphore.release()
 
-    # 重写 __init__
-    origin_init = cls.__init__
+    class _PoolDecoratorClass(cls):
+        def __init__(self, *args, **kwargs):
+            super(_PoolDecoratorClass, self).__init__(*args, **kwargs)
+            self.__semaphore = Semaphore(max_worker)
 
-    def new_init(self: cls):
-        origin_init(self)
-        self.semaphore = Semaphore(max_worker)
+        def __getattribute__(self, item):
+            what = super(_PoolDecoratorClass, self).__getattribute__(item)
+            if callable(what):
+                self.__semaphore.acquire()
+                return _SemaphoreRelease(what, self.__semaphore)
+            return what
 
-    cls.__init__ = new_init
-
-    # 重写 __getattribute__
-    origin_getattribute = cls.__getattribute__
-
-    def new_getattribute(self: cls, item: str):
-        semaphore = origin_getattribute(self, "semaphore")
-        semaphore.acquire()
-        what = origin_getattribute(self, item)
-        if callable(what):
-            return _SemaphoreRelease(what, semaphore)
-        return what
-
-    cls.__getattribute__ = new_getattribute
-
-    return cls
+    return _PoolDecoratorClass
 
 
 def _decorator(obj: Union[Callable, type], max_worker: Optional[int] = None) -> Union[Callable, type]:
