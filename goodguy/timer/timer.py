@@ -2,6 +2,7 @@ import logging
 import time
 
 from goodguy.timer.contest.contest_job import contest_job
+from goodguy.timer.feishu_calendar.calendar_job import calendar_job
 from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.go import go
 
@@ -10,6 +11,7 @@ from goodguy.util.go import go
 def job() -> None:
     logging.info('job start')
     contest_job()
+    calendar_job()
 
 
 def sync_timer():

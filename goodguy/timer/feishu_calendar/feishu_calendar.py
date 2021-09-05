@@ -1,3 +1,4 @@
+from typing import Tuple
 import requests
 import time
 
@@ -7,11 +8,25 @@ from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.platform_all import PLATFORM_ALL
 
 
+# TODO move to separately file
+def rgb_to_int(rgb: Tuple[int, int, int]):
+    return (rgb[0] << 16) | (rgb[1] << 8) | rgb[2]
+
+
+CALENDAR_COLOR = {
+    'codeforces': rgb_to_int((191, 63, 191)),  # purple
+    'atcoder': rgb_to_int((0, 191, 255)),  # deep sky blue
+    'nowcoder': rgb_to_int((63, 191, 63)),  # green
+    'leetcode': rgb_to_int((255, 165, 0))  # orange
+}
+
+
 class Calendar():
 
     def __init__(self):
-        print(self.__token)
-        print(self.__calendar_id)
+        pass
+        # print(self.__token)
+        # print(self.__calendar_id)
 
     @property
     def __token(self):
@@ -38,11 +53,13 @@ class Calendar():
 
             if response.ok:
                 response = response.json()['data']
+                if 'items' not in response:
+                    break
                 for event in response['items']:
                     if event['status'] != 'cancelled':  # 删除的 event 不会清掉，而是 status 变为 cancelled
                         events.append({
                             key: event[key]
-                            for key in ['summary', 'description', 'start_time', 'end_time', 'event_id']
+                            for key in ['summary', 'description', 'start_time', 'end_time', 'event_id', 'color']
                         })
 
                 if response['has_more']:
@@ -102,6 +119,7 @@ class Calendar():
                         'timestamp': str(contest.timestamp + contest.duration),
                         'timezone': 'Asia/Shanghai'
                     },
+                    'color': CALENDAR_COLOR[platform]
 
                 }
                 if contest.name in old_events:
@@ -120,4 +138,5 @@ class Calendar():
 
 if __name__ == '__main__':
     c = Calendar()
-    c.delete_timeout_events(timeout=60 * 60 * 24 * 3)
+    c.delete_timeout_events(timeout=-60 * 60 * 24 * 30)
+    c.update_all_events()
