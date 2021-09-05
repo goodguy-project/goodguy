@@ -8,7 +8,7 @@ from goodguy.util.config import GLOBAL_CONFIG
 def split_to_addr(to_addr: List[str], max_send: int = 10) -> List[List[str]]:
     ret: List[List[str]] = []
     for to in to_addr:
-        if not len(ret) or len(ret[-1]) >= max_send:
+        if not ret or len(ret[-1]) >= max_send:
             ret.append([])
         ret[-1].append(to)
     return ret
@@ -21,7 +21,7 @@ def send_email(from_addr: str, to_addrs: List[str], password: str, smtp_server: 
     server.quit()
 
 
-def send_all_email(t: str, title: str, text: str, max_send: int = 10) -> None:
+def send_all_email(t: str, title: str, text: str, max_send: int = 20) -> None:
     from_addr = GLOBAL_CONFIG.get("email.from")
     to_addr = GLOBAL_CONFIG.get("email.to")
     password = GLOBAL_CONFIG.get("email.password")

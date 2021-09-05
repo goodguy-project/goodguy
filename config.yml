@@ -1,31 +1,42 @@
-app:
-  id: ~
-  secret: ~
-  token: ~
-
 feishu:
+  # 飞书回传的HOST及端口号
   http:
     host: ~
     port: ~
+  # 飞书机器人应用ID、secret以及token
+  app:
+    id: ~
+    secret: ~
+    token: ~
 
+# CrawlService服务的HOST及端口号
 crawl_service:
   host: ~
   port: ~
 
 email:
+  # from是一个字符串，代表你的发信人
   from: ~
-  to:
-    - ~
-    - ~
+  # to是一个数组里面是字符串，代表每次推送的人
+  to: ~
+  # 邮件发送密码
   password: ~
+  # 邮件发送smtp服务器
   smtp:
     server: ~
     port: ~
+  # 每封邮件发送人上限，默认为20
   limit: ~
 
-loglevel: 10
+# logging的日志级别
+loglevel: 0
 
+# 定时器周期，默认45分钟，建议不要修改
 timer:
   interval: ~
 
-all_feishu_remind: ~
+# 所有OJ的爬虫信息是否推送飞书
+all_feishu_remind: false
+# 所有OJ的爬虫信息是否推送邮件
+all_email_remind: false
+# 如果仅部分OJ推送可以参考代码 goodguy\timer\contest\contest_job.py

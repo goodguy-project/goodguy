@@ -1,6 +1,7 @@
 import os
-import yaml
 from copy import deepcopy
+
+import yaml
 from readerwriterlock.rwlock import RWLockFairD
 
 
@@ -9,10 +10,10 @@ class Config(object):
         self.__lock = RWLockFairD()
         self.__conf = None
         self.__path = path
-        self.reload_config(path)
+        self.reload_config()
 
-    def reload_config(self, path: str) -> None:
-        with open(path, 'r', encoding='utf-8') as config_file:
+    def reload_config(self) -> None:
+        with open(self.__path, 'r', encoding='utf-8') as config_file:
             conf = yaml.load(config_file.read(), yaml.FullLoader)
         with self.__lock.gen_wlock():
             self.__conf = conf
@@ -28,7 +29,7 @@ class Config(object):
                     return default
                 try:
                     ret = ret[arg]
-                except:
+                except KeyError:
                     return default
             if ret is None:
                 return default

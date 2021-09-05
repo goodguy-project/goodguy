@@ -26,7 +26,7 @@ def send_message(request: Dict, receive_id_type: str) -> None:
 def send_card_message(request: Dict) -> None:
     tenant_access_token = get_tenant_access_token()
     rsp = requests.post(
-        f"https://open.feishu.cn/open-apis/message/v4/send/",
+        "https://open.feishu.cn/open-apis/message/v4/send/",
         data=json.dumps(request),
         headers={
             "Authorization": f"Bearer {tenant_access_token}",

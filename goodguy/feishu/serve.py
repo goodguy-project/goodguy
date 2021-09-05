@@ -2,15 +2,16 @@ import json
 import logging
 import http
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from concurrent.futures import ThreadPoolExecutor
+
 from goodguy.feishu.message_receive import message_receive
 from goodguy.util.config import GLOBAL_CONFIG
-from concurrent.futures import ThreadPoolExecutor
 
 MESSAGE_RECEIVE_EXECUTOR = ThreadPoolExecutor(max_workers=20)
 
 
 class FeishuRequestHandler(BaseHTTPRequestHandler):
-    def do_POST(self):
+    def do_POST(self):  # pylint: disable=invalid-name
         global MESSAGE_RECEIVE_EXECUTOR
         # 解析请求 body
         try:
@@ -20,11 +21,11 @@ class FeishuRequestHandler(BaseHTTPRequestHandler):
                 token = body["header"]["token"]
             except KeyError:
                 token = body["token"]
-            if token != GLOBAL_CONFIG.get("app.token"):
+            if token != GLOBAL_CONFIG.get("feishu.app.token"):
                 self.__response("", http.HTTPStatus.BAD_REQUEST)
                 return
             # 验证请求 URL是否有效
-            if "url_verification" == body.get("type", ""):
+            if body.get("type", "") == "url_verification":
                 self.__response(json.dumps({
                     "challenge": body["challenge"]
                 }))

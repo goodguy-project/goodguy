@@ -2,23 +2,58 @@
 
 ## 简介
 
-飞书查询机器人
+### 飞书查询机器人
 
-> 1.查询用户Codeforces情况，样式：`cf 用户名`  
-> 2.查询用户AtCoder情况，样式：`atc 用户名`  
-> 3.查询Codeforces最近比赛，样式：`cf`  
-> 4.给该群添加提醒，样式：`notice`  
-> 5.取消提醒，样式：`unnotice`  
-> 6.查询Nowcoder情况，样式：`nc 牛客ID`  
-> 7.查询Nowcoder最近比赛，样式：`nc`  
-> 8.查询AtCoder最近比赛，样式：`atc`  
-> 9.查询Nowcoder最近热帖，样式：`ncp`  
-> 10.查询Leetcode最近比赛，样式：`lc`  
+|Online Judge|作用|命令|
+|----|----|----|
+|Codeforces|查询用户|cf {Codeforces ID}|
+|Codeforces|查询最近比赛|cf|
+|Nowcoder|查询用户|nc {Nowcoder ID}|
+|Nowcoder|查询最近比赛|nc|
+|AtCoder|查询用户|atc {AtCoder ID}|
+|AtCoder|查询最近比赛|atc|
+|LeetCode|查询最近比赛|lc|
+| |给该群添加提醒|remind|
+| |取消提醒|forget|
 
-可在`config.yml`中设置邮件提醒
+### 邮件提醒机器人
+
+开启邮件提醒后，当要有比赛开始时会发送比赛邮件提醒的推送。
 
 ## 使用方法
 
-<!-- 需要把根目录（GoodGuy）放在环境变量PYTHONPATH中 -->
+### CrawlService
 
-## 设计思路
+本项目需要基于强大的gRPC框架，以及项目 [CrawlService](https://github.com/ConanYu/CrawlService) 作为爬虫支持。请先运行 [CrawlService](https://github.com/ConanYu/CrawlService) 再运行本项目，本项目才能运行起来。
+
+### 安装Python3
+
+建议最高版本，方法略。
+
+### 安装Python依赖
+
+`pip install -r requirements.txt`
+
+### 建立gRPC依赖
+
+`python build.py`
+
+### 配置PYTHONPATH
+
+Windows: 在项目根目录下执行`set PYTHONPATH=.`
+
+Mac Linux: 在项目根目录下执行`export PYTHONPATH=.`
+
+### 配置文件
+
+配置文件只有一个，为根目录下的config.yml文件。
+
+如果需要使用飞书机器人，需要在配置文件中的feishu的进行补充信息。
+
+如果需要使用到邮件机器人，需要在配置文件中的email的配置中进行补充信息。
+
+如果某些功能没有生效，可以先查看一下配置文件是否配置好。
+
+### 运行
+
+命令行执行 `python goodguy/main.py`
