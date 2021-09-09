@@ -5,7 +5,7 @@ import time
 from goodguy.feishu.access_token import get_tenant_access_token
 from goodguy.service.crawl import get_recent_contest
 from goodguy.util.config import GLOBAL_CONFIG
-from goodguy.util.platform_all import PLATFORM_ALL
+from goodguy.util.const import PLATFORM_ALL
 
 
 # TODO move to separately file
