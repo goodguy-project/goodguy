@@ -42,7 +42,7 @@ def get_contest_email(cts: List[Tuple[str, crawl_service_pb2.RecentContest]]) ->
         }
 
     path = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(path, 'contest_email.mjml'), 'r', encoding='utf-8') as file:
+    with open(os.path.join(path, 'contest_email.jinja2'), 'r', encoding='utf-8') as file:
         e = file.read()
     template = Template(e)
     urgent = []
