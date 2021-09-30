@@ -52,7 +52,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
             "type": 'forget',
         }
     if op in PLATFORM_ALL:
-        if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder', 'luogu'}:
+        if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
             data = get_user_contest_record(op, handle)
             if sns == 'feishu':
                 return {
