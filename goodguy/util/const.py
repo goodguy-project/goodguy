@@ -12,7 +12,9 @@ USAGE = '''1.查询用户CodeForces情况，样式：`cf 用户名`
 6.查询NowCoder情况，样式：`nc 牛客ID`
 7.查询NowCoder最近比赛，样式：`nc`
 8.查询AtCoder最近比赛，样式：`atc`
-9.查询LeetCode最近比赛，样式：`lc`'''
+9.查询LeetCode最近比赛，样式：`lc`
+10.查询Luogu最近比赛，样式：`lg`
+11.查询Luogu情况，样式：`lg 洛谷ID`'''
 
 COLORS = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple', 'indigo')
 
