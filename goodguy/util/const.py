@@ -2,7 +2,7 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-PLATFORM_ALL = ['codeforces', 'nowcoder', 'atcoder', 'leetcode']
+PLATFORM_ALL = ['codeforces', 'nowcoder', 'atcoder', 'leetcode', 'luogu']
 
 USAGE = '''1.查询用户CodeForces情况，样式：`cf 用户名`
 2.查询用户AtCoder情况，样式：`atc 用户名`
