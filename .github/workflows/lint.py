@@ -9,7 +9,7 @@ def lint():
             if file.split('.')[-1] == 'py':
                 args = (
                     '--max-line-length=120',
-                    '--disable=C0114,C0115,C0116,W,R0903,E0611,E0401,R0205,R0913',
+                    '--disable=C0114,C0115,C0116,W,R0903,E0611,E0401,R0205,R0913,C0209',
                     '--variable-rgx=[a-z_][a-z0-9_]*$',
                     '--argument-rgx=[a-z_][a-z0-9_]*$',
                 )
