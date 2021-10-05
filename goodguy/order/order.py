@@ -18,6 +18,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
         "atc": "atcoder",
         "nc": "nowcoder",
         "lc": "leetcode",
+        "lg": "luogu",
     }.get(op, op)
     handle = '' if len(text_split) <= 1 else text_split[1]
     logging.debug(f"text: {text}\nop: {op}\nhandle: {handle}")
@@ -51,7 +52,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
             "type": 'forget',
         }
     if op in PLATFORM_ALL:
-        if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder'}:
+        if handle != '' and op in {'codeforces', 'atcoder', 'nowcoder', 'leetcode'}:
             data = get_user_contest_record(op, handle)
             if sns == 'feishu':
                 return {
@@ -66,7 +67,7 @@ def order(text: str, sns: Optional[str] = None) -> Dict:
                 },
                 "msg_type": "text",
             }
-        if handle == '' and op in PLATFORM_ALL:
+        if handle == '' and op in {'codeforces', 'nowcoder', 'atcoder', 'leetcode', 'luogu'}:
             data = get_recent_contest(op)
             if sns == 'feishu':
                 return {

@@ -2,7 +2,7 @@ import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-PLATFORM_ALL = ['codeforces', 'nowcoder', 'atcoder', 'leetcode']
+PLATFORM_ALL = ['codeforces', 'nowcoder', 'atcoder', 'leetcode', 'luogu']
 
 USAGE = '''1.查询用户CodeForces情况，样式：`cf 用户名`
 2.查询用户AtCoder情况，样式：`atc 用户名`
@@ -12,7 +12,8 @@ USAGE = '''1.查询用户CodeForces情况，样式：`cf 用户名`
 6.查询NowCoder情况，样式：`nc 牛客ID`
 7.查询NowCoder最近比赛，样式：`nc`
 8.查询AtCoder最近比赛，样式：`atc`
-9.查询LeetCode最近比赛，样式：`lc`'''
+9.查询LeetCode最近比赛，样式：`lc`
+10.查询Luogu最近比赛，样式：`lg`'''
 
 COLORS = ('blue', 'wathet', 'turquoise', 'green', 'yellow', 'orange', 'red', 'carmine', 'violet', 'purple', 'indigo')
 

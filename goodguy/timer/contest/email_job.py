@@ -42,7 +42,7 @@ def get_contest_email(cts: List[Tuple[str, crawl_service_pb2.RecentContest]]) ->
         }
 
     path = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(path, 'contest_email.mjml'), 'r', encoding='utf-8') as file:
+    with open(os.path.join(path, 'contest_email.jinja2'), 'r', encoding='utf-8') as file:
         e = file.read()
     template = Template(e)
     urgent = []
@@ -51,11 +51,11 @@ def get_contest_email(cts: List[Tuple[str, crawl_service_pb2.RecentContest]]) ->
     now = time.time()
     for pf, c in cts:
         # 一天内的比赛
-        if c.timestamp < now + 60 * 60 + 10:
+        if now - 60 * 60 - 10 < c.timestamp < now + 60 * 60 + 10:
             urgent.append(get_email_object(pf, c))
         elif c.timestamp < now + 60 * 60 * 24 + 10:
             common.append(get_email_object(pf, c))
-        else:
+        elif c.timestamp >= now + 60 * 60 * 24 + 10:
             not_urgent.append(get_email_object(pf, c))
     mjml = template.render({
         "urgent": urgent,
