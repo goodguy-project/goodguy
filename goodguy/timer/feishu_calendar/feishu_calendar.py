@@ -1,16 +1,16 @@
-from typing import Tuple
-import requests
 import time
+import logging
+from typing import Tuple
+
+import requests
+from retrying import retry
 
 from goodguy.feishu.access_token import get_tenant_access_token
 from goodguy.service.crawl import get_recent_contest
+from goodguy.util.catch_exception import catch_exception
 from goodguy.util.config import GLOBAL_CONFIG
 from goodguy.util.const import PLATFORM_ALL
-
-
-# TODO move to separately file
-def rgb_to_int(rgb: Tuple[int, int, int]):
-    return (rgb[0] << 16) | (rgb[1] << 8) | rgb[2]
+from goodguy.util.color import rgb_to_int
 
 
 CALENDAR_COLOR = {
@@ -21,7 +21,7 @@ CALENDAR_COLOR = {
 }
 
 
-class Calendar():
+class Calendar:
 
     def __init__(self):
         pass
@@ -36,10 +36,10 @@ class Calendar():
     def __calendar_id(self):
         return GLOBAL_CONFIG.get('calendar.id')
 
-    # TODO 日程太多时会分页，应改为逐页获取，默认一页有 500 个，虽然理论上不会有 500 个 event
+    @catch_exception(ret=[])
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
     def get_all_events(self, begin_time=0):
         events = []
-        # 获取过程有 retry_time 次网络问题则 gg，每次获取失败重新获取当前页
         retry_time = 5
         page_token = ''
         while retry_time > 0:
@@ -52,25 +52,32 @@ class Calendar():
                 })
 
             if response.ok:
-                response = response.json()['data']
-                if 'items' not in response:
+                response = response.json()
+                if response['code'] != 0: # 正常错误码应为0
+                    retry_time -= 1
+                    continue
+                if 'items' not in response['data']: # 日程为空
                     break
-                for event in response['items']:
+                for event in response['data']['items']:
                     if event['status'] != 'cancelled':  # 删除的 event 不会清掉，而是 status 变为 cancelled
                         events.append({
                             key: event[key]
                             for key in ['summary', 'description', 'start_time', 'end_time', 'event_id', 'color']
                         })
 
-                if response['has_more']:
-                    page_token = response['page_token']
+                if response['data']['has_more']:
+                    page_token = response['data']['page_token']
                 else:
                     break
             else:
+                logging.debug(f'error when get url: {response.url} with status code {response.status_code}')
                 retry_time -= 1
+        if retry_time == 0:
+            raise Exception('"get_all_events" faild after some retry')
 
         return events
 
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
     def update_event(self, old_event, new_event):
         response = requests.patch(
             url=f'https://open.feishu.cn/open-apis/calendar/v4/calendars/{self.__calendar_id}/events/{old_event["event_id"]}',
@@ -80,7 +87,9 @@ class Calendar():
             },
             json=new_event
         )
+        logging.debug(response.text)
 
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
     def create_event(self, new_event):
         response = requests.post(
             url=f'https://open.feishu.cn/open-apis/calendar/v4/calendars/{self.__calendar_id}/events',
@@ -90,7 +99,9 @@ class Calendar():
             },
             json=new_event
         )
+        logging.debug(response.text)
 
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
     def delete_event(self, event):
         response = requests.delete(
             url=f'https://open.feishu.cn/open-apis/calendar/v4/calendars/{self.__calendar_id}/events/{event["event_id"]}',
@@ -99,7 +110,9 @@ class Calendar():
                 'content-type': 'application/json; charset=utf-8'
             }
         )
+        logging.debug(response.text)
 
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
     def update_all_events(self):
         old_events = self.get_all_events()
         # TODO 暂且以比赛名字为唯一标识符
@@ -119,18 +132,20 @@ class Calendar():
                         'timestamp': str(contest.timestamp + contest.duration),
                         'timezone': 'Asia/Shanghai'
                     },
-                    'color': CALENDAR_COLOR[platform]
+                    'color': CALENDAR_COLOR.get(platform, 0)
 
                 }
                 if contest.name in old_events:
+                    print(contest.name)
                     self.update_event(old_events[contest.name], new_event)
                 else:
                     self.create_event(new_event)
 
     # 默认保留一周内的事件
-    def delete_timeout_events(self, timeout=60 * 60 * 24 * 7):
+    @retry(stop_max_attempt_number=5, wait_fixed=20000)
+    def delete_timeout_events(self, timeout=-60 * 60 * 24 * 7):
         old_events = self.get_all_events()
-        last_time = int(time.time()) - timeout
+        last_time = int(time.time()) + timeout
         for event in old_events:
             if int(event['start_time']['timestamp']) < last_time:
                 self.delete_event(event)
@@ -138,5 +153,9 @@ class Calendar():
 
 if __name__ == '__main__':
     c = Calendar()
-    c.delete_timeout_events(timeout=-60 * 60 * 24 * 30)
+    print(get_recent_contest('codeforces'))
+    # all = c.get_all_events()
+    # print(all)
+    # c.delete_timeout_events(timeout=60 * 60 * 24 * 90)
     c.update_all_events()
+    
