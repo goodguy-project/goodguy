@@ -30,7 +30,7 @@ class Config(object):
                 try:
                     if isinstance(ret, list):
                         arg = int(arg)
-                    ret = ret[arg]
+                    ret = ret[arg] # pylint: disable=unsubscriptable-object
                 except (KeyError, ValueError, IndexError, TypeError):
                     return default
             if ret is None:
