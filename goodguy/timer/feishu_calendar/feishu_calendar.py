@@ -17,6 +17,7 @@ def get_event_color(platform: str) -> int:
     res = GLOBAL_CONFIG.get(f'calendar.event_color.{platform}', 0)
     try:
         res = tuple(map(int, res[1:-1].split(',')))
+        assert (len(res) == 3)
     except Exception as e:
         logging.warning(f'bad color config of {platform}: {res}')
         return 0
