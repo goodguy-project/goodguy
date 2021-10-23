@@ -13,13 +13,14 @@ from goodguy.util.const import PLATFORM_ALL
 from goodguy.util.color import rgb_to_int
 
 
-CALENDAR_COLOR = {
-    'codeforces': rgb_to_int((191, 63, 191)),  # purple
-    'atcoder': rgb_to_int((0, 191, 255)),  # deep sky blue
-    'nowcoder': rgb_to_int((63, 191, 63)),  # green
-    'leetcode': rgb_to_int((255, 165, 0))  # orange
-}
-
+def get_event_color(platform: str) -> int:
+    res = GLOBAL_CONFIG.get(f'calendar.event_color.{platform}', 0)
+    try:
+        res = tuple(map(int, res[1:-1].split(',')))
+    except Exception as e:
+        logging.warning(f'bad color config of {platform}: {res}')
+        return 0
+    return rgb_to_int(res)
 
 class Calendar:
 
@@ -132,7 +133,7 @@ class Calendar:
                         'timestamp': str(contest.timestamp + contest.duration),
                         'timezone': 'Asia/Shanghai'
                     },
-                    'color': CALENDAR_COLOR.get(platform, 0)
+                    'color': get_event_color(platform)
 
                 }
                 if contest.name in old_events:
