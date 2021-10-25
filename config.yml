@@ -40,3 +40,12 @@ all_feishu_remind: false
 # 所有OJ的爬虫信息是否推送邮件
 all_email_remind: false
 # 如果仅部分OJ推送可以参考代码 goodguy\timer\contest\contest_job.py
+
+calendar:
+  id: ~
+  event_color:
+    codeforces: (191, 63, 191)  # purple
+    atcoder: (0, 191, 255)  # deep sky blue
+    nowcoder: (63, 191, 63)  # green
+    leetcode: (255, 165, 0)  # orange
+    luogu: (178, 34, 34)  # fire brick
