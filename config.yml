@@ -49,3 +49,11 @@ calendar:
     nowcoder: (63, 191, 63)  # green
     leetcode: (255, 165, 0)  # orange
     luogu: (178, 34, 34)  # fire brick
+
+# 邮件订阅系统服务信息
+email_subscription:
+  host: ~
+  port: ~
+  admin:
+    email: ~
+    password: ~

@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from typing import List
 
+from goodguy.service.email_subscription import get_subscriber
 from goodguy.util.config import GLOBAL_CONFIG
 
 
@@ -23,11 +24,11 @@ def send_email(from_addr: str, to_addrs: List[str], password: str, smtp_server: 
 
 def send_all_email(t: str, title: str, text: str, max_send: int = 20) -> None:
     from_addr = GLOBAL_CONFIG.get("email.from")
-    to_addr = GLOBAL_CONFIG.get("email.to")
+    to_addr = get_subscriber()
     password = GLOBAL_CONFIG.get("email.password")
     smtp_server = GLOBAL_CONFIG.get("email.smtp.server")
     smtp_port = GLOBAL_CONFIG.get("email.smtp.port")
-    if to_addr is None or to_addr == []:
+    if not to_addr:
         return
     for to in split_to_addr(to_addr, max_send):
         mail = MIMEText(text, t, 'utf-8')
