@@ -18,7 +18,7 @@ MarkupSafe==2.0.1
 matplotlib==3.4.3
 mccabe==0.6.1
 numpy==1.21.1
-Pillow==8.3.2
+Pillow==9.0.0
 platformdirs==2.2.0
 protobuf==3.17.3
 pylint==2.10.2
