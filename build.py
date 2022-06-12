@@ -1,28 +1,22 @@
 import os
-import sys
+import platform
 
-import requests
+def get_source_env():
+    return {
+        "CGO_ENABLED": 1,
+        "GOARCH": platform.machine().lower(),
+        "GOOS": platform.system().lower(),
+    }
 
+ROOT = os.path.dirname(os.path.abspath(__file__))
 
-def build():
-    root = os.path.dirname(os.path.abspath(__file__))
-    os.chdir(root)
-    pb_path = os.path.join(root, 'goodguy', 'pb')
-    if not os.path.exists(pb_path):
-        os.mkdir(pb_path)
-    crawl_service_proto_path = os.path.join(pb_path, 'crawl_service.proto')
-    with open(crawl_service_proto_path, 'w', encoding='utf-8') as pb_file:
-        pb_file.write(requests.get(
-            # 使用镜像
-            "https://mirror.ghproxy.com/"
-            "https://raw.githubusercontent.com/goodguy-project/goodguy-crawl/main/crawl_service/crawl_service.proto",
-            headers={
-                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/91.0.4472.164 Safari/537.36",
-            }).text)
-    os.system(f'{sys.executable} -m grpc_tools.protoc -I{root} --python_out={root} --grpc_python_out={root} '
-              f'{crawl_service_proto_path}')
+def build_cmd():
+    source_env = get_source_env()
+    for goos in ('darwin', 'freebsd', 'linux', 'windows'):
+        for goarch in ('386', 'amd64', 'arm'):
+            print(f'GOOS: {goos}, GOARCH: {goarch}')
+            os.system(f'go env -w CGO_ENABLED=0 GOOS={goos} GOARCH={goarch}')
+            os.system(f'cd {os.path.join(ROOT, "cmd")} && go build -o dist/goodguy.cmd.{goarch}.{goos}')
+    os.system('go env -w ' + ' '.join([f"{k}={v}" for k, v in source_env.items()]))
 
-
-if __name__ == '__main__':
-    build()
+build_cmd()
