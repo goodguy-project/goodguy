@@ -1,7 +1,7 @@
 APScheduler==3.7.0
 astroid==2.7.2
 cachetools==4.2.2
-certifi==2021.5.30
+certifi==2022.12.7
 charset-normalizer==2.0.3
 colorama==0.4.4
 cycler==0.10.0
