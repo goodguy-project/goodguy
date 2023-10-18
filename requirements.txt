@@ -35,6 +35,6 @@ SQLAlchemy==1.4.22
 toml==0.10.2
 typing-extensions==3.10.0.0
 tzlocal==2.1
-urllib3==1.26.6
+urllib3==1.26.18
 win32-setctime==1.0.3
 wrapt==1.12.1
